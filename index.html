@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VIRU AI - Sinhala Editorial Voice Assistant</title>
+  <title>VIRU AI - Sinhala Editorial Talking Avatar</title>
   
   <!-- Tailwind CSS v4 CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Google Fonts: Inter (sans), Playfair Display (serif), JetBrains Mono (mono) -->
+  <!-- Google Fonts: Inter, Playfair Display, and JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -31,7 +31,7 @@
   </script>
 
   <style>
-    /* Editorial Layout Scrollbar */
+    /* Custom Scrollbars */
     ::-webkit-scrollbar {
       width: 4px;
       height: 4px;
@@ -40,134 +40,234 @@
       background: #0D0D0D;
     }
     ::-webkit-scrollbar-thumb {
-      background: #333333;
+      background: #252525;
       border-radius: 2px;
     }
     ::-webkit-scrollbar-thumb:hover {
       background: #E53935;
     }
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
+
+    /* Keyframe Animations for Avatar */
+    
+    /* Gentle organic breathing swaying */
+    @keyframes sway {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-4px) rotate(0.8deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
     }
     
+    /* Auto blink cycle for the eyes */
+    @keyframes blink {
+      0%, 90%, 100% { transform: scaleY(1); }
+      95% { transform: scaleY(0.1); }
+    }
+
+    /* Hair wind sway */
+    @keyframes hairSway {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(1.5deg); }
+    }
+
+    /* Apply classes */
+    .avatar-sway {
+      animation: sway 5s ease-in-out infinite;
+      transform-origin: bottom center;
+    }
+
+    .eye-blink {
+      animation: blink 4.2s infinite;
+      transform-origin: center;
+    }
+
+    .hair-sway {
+      animation: hairSway 6s ease-in-out infinite;
+      transform-origin: top center;
+    }
+
+    /* Micro-fading effects */
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
+      from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
     .animate-fade-in {
-      animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
   </style>
 </head>
-<body class="h-full bg-[#0D0D0D] text-[#F2F2F2] flex flex-col font-sans relative antialiased selection:bg-[#E53935] selection:text-white">
+<body class="h-full bg-[#0D0D0D] text-[#F2F2F2] flex flex-col font-sans relative antialiased selection:bg-[#E53935] selection:text-white overflow-hidden">
 
-  <!-- Main Grid Wrapper to maintain premium Editorial asymmetry -->
-  <div class="flex-1 flex flex-col md:flex-row h-full overflow-hidden max-w-[1400px] mx-auto w-full border-x border-white/5 relative z-10">
+  <!-- Editorial layout frame wrapper -->
+  <div class="flex-1 flex flex-col md:flex-row h-full overflow-hidden max-w-[1440px] mx-auto w-full border-x border-white/5 relative z-10">
     
-    <!-- LEFT PANEL: Primary Chat and Waveform Interface -->
-    <div class="flex-1 flex flex-col p-6 md:p-12 overflow-hidden border-b md:border-b-0 md:border-r border-white/5 relative">
+    <!-- LEFT PANEL: High Fidelity Talking Avatar Display + Status Diagnostics -->
+    <div class="w-full md:w-[480px] bg-[#0A0A0A] border-b md:border-b-0 md:border-r border-white/5 flex flex-col justify-between p-6 md:p-8 shrink-0 relative overflow-hidden">
       
-      <!-- Premium Editorial Header -->
-      <header class="mb-8 md:mb-12 flex justify-between items-baseline shrink-0">
-        <div class="flex flex-col">
-          <span class="text-[10px] uppercase tracking-[0.25em] text-[#737373] font-bold flex items-center gap-2">
-            <span id="header-status-indicator" class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            Viruna Randinu Masterpiece / Online
-          </span>
-          <h1 class="font-serif text-4xl md:text-6xl font-bold tracking-tight leading-none mt-2">
-            Gemini 3.1<br/><span class="italic text-[#E53935]">Flash Lite</span>
-          </h1>
-        </div>
-        <div class="text-right hidden sm:block">
-          <span class="text-[10px] uppercase tracking-[0.25em] text-[#737373] font-bold block">Latency</span>
-          <p class="text-2xl font-light font-mono mt-1 text-[#F2F2F2]">14ms</p>
-        </div>
-      </header>
+      <!-- Micro-meta details -->
+      <div class="flex items-center justify-between z-10 shrink-0">
+        <span class="text-[10px] uppercase tracking-[0.25em] text-[#737373] font-bold flex items-center gap-2">
+          <span id="avatar-status-dot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          REALTIME AVATAR PIPELINE / ACTIVE
+        </span>
+        <span class="text-[9px] font-mono text-[#E53935] bg-[#E53935]/10 px-2.5 py-1 rounded border border-[#E53935]/20 uppercase tracking-widest font-bold">
+          VIRU AI v3.1
+        </span>
+      </div>
 
-      <!-- Waveform and Live Activity Monitor -->
-      <div class="bg-[#141414] border border-white/5 rounded-2xl p-5 mb-6 flex flex-col items-center justify-center relative overflow-hidden shrink-0">
-        <div class="absolute top-4 left-5 text-[9px] font-mono uppercase tracking-[0.2em] text-[#737373] flex items-center gap-2">
-          <i data-lucide="headphones" class="w-3 h-3 text-[#E53935]"></i>
-          <span>Live Audio Stream Wave</span>
-        </div>
+      <!-- INTERACTIVE TALKING HUMAN GIRL AVATAR (SVG + Dynamic Morphs) -->
+      <div class="flex-1 flex flex-col items-center justify-center py-6 relative z-10">
         
-        <div class="absolute top-4 right-5">
-          <span id="waveform-label" class="text-[9px] font-mono uppercase tracking-[0.2em] text-[#737373] transition-colors duration-300">
-            Standby
-          </span>
-        </div>
+        <!-- Glowing gradient mood backlighting -->
+        <div id="avatar-backglow" class="absolute w-64 h-64 rounded-full bg-[#E53935]/5 blur-[80px] pointer-events-none transition-all duration-700"></div>
 
-        <!-- Waveform Container -->
-        <div class="relative w-full flex justify-center items-center h-20 my-2">
-          <svg id="waveform-svg" class="w-full max-w-lg h-14" viewBox="0 0 400 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path id="wave-path-1" d="M 0 50 Q 100 50, 200 50 T 400 50" stroke="url(#gradient1)" stroke-width="2.5" stroke-linecap="round" />
-            <path id="wave-path-2" d="M 0 50 Q 100 50, 200 50 T 400 50" stroke="url(#gradient2)" stroke-width="1.5" stroke-linecap="round" opacity="0.4" />
-            <defs>
-              <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#E53935" />
-                <stop offset="100%" stop-color="#737373" />
-              </linearGradient>
-              <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#333" />
-                <stop offset="100%" stop-color="#E53935" />
-              </linearGradient>
-            </defs>
+        <!-- High-fidelity SVG Avatar canvas -->
+        <div class="w-72 h-72 md:w-80 md:h-80 relative flex items-center justify-center avatar-sway">
+          <svg class="w-full h-full" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+            
+            <!-- Neck & shoulders -->
+            <path d="M160 310 L240 310 L260 400 L140 400 Z" fill="#F0C0A0" />
+            <path d="M160 310 L240 310 L240 340 L160 340 Z" fill="#E2AE8E" /> <!-- Neck shadow -->
+            
+            <!-- Red Editorial Dress Collar -->
+            <path d="M130 380 L180 340 L200 365 L220 340 L270 380 L250 400 L150 400 Z" fill="#E53935" />
+            <path d="M200 365 L180 340 L220 340 Z" fill="#B71C1C" />
+
+            <!-- Ears -->
+            <circle cx="120" cy="210" r="16" fill="#F0C0A0" />
+            <circle cx="280" cy="210" r="16" fill="#F0C0A0" />
+            <circle cx="120" cy="210" r="8" fill="#E2AE8E" />
+            <circle cx="280" cy="210" r="8" fill="#E2AE8E" />
+
+            <!-- Face Structure -->
+            <path d="M130 180 Q130 290 200 290 Q270 290 270 180 Z" fill="#F0C0A0" />
+            <path d="M130 160 Q200 130 270 160 C270 160 275 190 270 210 Q200 240 130 210 C125 190 130 160 130 160 Z" fill="#F0C0A0" />
+
+            <!-- Soft Blush on Cheeks -->
+            <ellipse cx="155" cy="235" rx="14" ry="7" fill="#E53935" opacity="0.15" />
+            <ellipse cx="245" cy="235" rx="14" ry="7" fill="#E53935" opacity="0.15" />
+
+            <!-- Eyes (With automated blinking animation loop) -->
+            <g class="eye-blink">
+              <!-- Left Eye Outer & Shadow -->
+              <ellipse cx="165" cy="205" rx="14" ry="10" fill="#FFFFFF" />
+              <circle cx="165" cy="205" r="7" fill="#3E2723" />
+              <circle cx="163" cy="203" r="2.5" fill="#FFFFFF" />
+              
+              <!-- Right Eye Outer & Shadow -->
+              <ellipse cx="235" cy="205" rx="14" ry="10" fill="#FFFFFF" />
+              <circle cx="235" cy="205" r="7" fill="#3E2723" />
+              <circle cx="233" cy="203" r="2.5" fill="#FFFFFF" />
+            </g>
+
+            <!-- Eyebrows -->
+            <path d="M148 190 Q165 180 180 192" stroke="#251510" stroke-width="3" stroke-linecap="round" fill="none" />
+            <path d="M220 192 Q235 180 252 190" stroke="#251510" stroke-width="3" stroke-linecap="round" fill="none" />
+
+            <!-- Cute Nose -->
+            <path d="M195 224 Q200 230 205 224" stroke="#E2AE8E" stroke-width="2.5" stroke-linecap="round" fill="none" />
+
+            <!-- LIP SYNC MOUTH (Morphs dynamically via JS depending on speech state) -->
+            <!-- We will address this path node directly using ID 'mouth-path' -->
+            <path id="mouth-path" d="M185 255 Q200 262 215 255 Q200 258 185 255 Z" fill="#C2185B" stroke="#880E4F" stroke-width="1.5" />
+
+            <!-- Front Hair / Bangs (Asymmetric human girl hairstyles) -->
+            <path class="hair-sway" d="M125 170 Q200 110 275 170 C285 140 270 90 200 90 C130 90 115 140 125 170 Z" fill="#251510" />
+            <path class="hair-sway" d="M125 170 Q150 160 175 175 Q200 130 125 170 Z" fill="#1C0F0B" />
+            <path class="hair-sway" d="M275 170 Q250 160 225 175 Q200 130 275 170 Z" fill="#1C0F0B" />
+            
+            <!-- Long Hair strands framing the face -->
+            <path d="M130 170 C110 210 115 280 135 320 C140 330 125 320 120 300 C110 260 115 200 128 170 Z" fill="#251510" />
+            <path d="M270 170 C290 210 285 280 265 320 C260 330 275 320 280 300 C290 260 285 200 272 170 Z" fill="#251510" />
+
           </svg>
         </div>
 
-        <!-- STT Errors Panel -->
-        <div id="stt-error-bar" class="hidden mt-1 text-xs text-[#E53935] font-bold flex items-center gap-2 bg-[#E53935]/5 border border-[#E53935]/20 px-4 py-2 rounded-lg animate-pulse">
-          <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
-          <span id="stt-error-text">දෝෂයක් සිදු විය</span>
+        <!-- Realtime Diagnostic Status Log info -->
+        <div class="mt-4 text-center">
+          <p id="action-hint-label" class="text-xs uppercase tracking-widest text-[#737373] font-mono">
+            Mic active / Please speak now
+          </p>
+          <p class="text-[10px] text-[#555555] font-mono mt-1">
+            Lip-sync matching: <span id="sync-diagnostic" class="text-[#737373]">OFF</span>
+          </p>
         </div>
 
-        <p class="text-[10px] text-[#737373] text-center mt-2 font-mono">
-          Press <span class="bg-[#252525] text-white px-1.5 py-0.5 rounded border border-white/5 font-bold">A</span> on keyboard to open Admin Settings
-        </p>
       </div>
 
-      <!-- Dialogue History / Conversation Logs -->
-      <div id="dialogue-box" class="flex-1 overflow-y-auto space-y-6 pr-2 no-scrollbar mb-6 min-h-[180px]">
+      <!-- Diagnostic Latency & Engine spec lines -->
+      <div class="border-t border-white/5 pt-4 flex justify-between text-[10px] uppercase tracking-widest text-[#737373] font-mono shrink-0">
+        <span>Engine: Bidi-Stream v3.1</span>
+        <span>FPS: 60.00</span>
+      </div>
+
+    </div>
+
+    <!-- RIGHT PANEL: Chat History & Input Dock and Collapsible Settings -->
+    <div class="flex-1 flex flex-col p-6 md:p-12 overflow-hidden relative">
+      
+      <!-- Top header detailing name/status -->
+      <header class="mb-8 flex justify-between items-baseline shrink-0">
+        <div class="flex flex-col">
+          <span class="text-[10px] uppercase tracking-[0.25em] text-[#737373] font-bold">Sinhala Conversational Assistant</span>
+          <h2 class="font-serif text-3xl font-bold mt-1 text-[#F2F2F2]">
+            VIRU AI <span class="italic text-[#E53935]">Sinhala Edition</span>
+          </h2>
+          <span class="text-[9px] font-mono text-[#555] mt-1">PROUDLY CREATED BY MASTERMIND VIRUNA RANDINU 😎</span>
+        </div>
+        <div class="text-right">
+          <button
+            id="btn-settings-toggle"
+            class="p-2.5 rounded-xl border border-white/10 bg-[#141414] text-[#737373] hover:text-[#F2F2F2] transition-all cursor-pointer"
+            title="Admin Configuration Panel"
+          >
+            <i data-lucide="settings" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Chat History dialogue timeline -->
+      <div id="dialogue-box" class="flex-1 overflow-y-auto space-y-6 pr-2 no-scrollbar mb-6 min-h-[160px]">
         
-        <!-- Welcome card message -->
+        <!-- Welcome banner -->
         <div class="flex flex-col items-start animate-fade-in">
           <div class="max-w-[90%] border-l-2 border-[#E53935] pl-5 py-2">
             <p class="text-lg md:text-xl font-light leading-relaxed italic text-[#F2F2F2]">
               "ආයුබෝවන්! මම VIRU AI. මට සිංහලෙන් ඕනෑම දෙයක් කියන්න හෝ අසන්න. මම ඔබට කටහඬින් සහ ලිඛිතව දිගු, විස්තරාත්මක පිළිතුරු සැපයීමට සූදානම්! 🚀😎"
             </p>
           </div>
-          <span class="text-[9px] font-mono uppercase tracking-widest text-[#737373] mt-2 pl-5">SYSTEM GREETING</span>
+          <span class="text-[9px] font-mono uppercase tracking-widest text-[#737373] mt-2 pl-5">VIRU AI GREETING</span>
         </div>
 
       </div>
 
-      <!-- Suggested Editorial Preset Chips -->
+      <!-- STT Micro-diagnostic Alert Bar -->
+      <div id="stt-error-bar" class="hidden shrink-0 mb-4 text-xs text-[#E53935] font-bold flex items-center gap-2 bg-[#E53935]/5 border border-[#E53935]/20 px-4 py-2.5 rounded-xl animate-pulse">
+        <i data-lucide="alert-circle" class="w-4 h-4"></i>
+        <span id="stt-error-text">දෝෂයක් සිදු විය</span>
+      </div>
+
+      <!-- Quick Suggested Preset Question Pills -->
       <div class="flex items-center gap-2 overflow-x-auto py-2 no-scrollbar shrink-0 w-full border-t border-white/5 mb-4">
-        <button onclick="submitPreset('ලස්සන සිංහල කවියක් කියන්න')" class="text-[11px] uppercase tracking-wider font-bold bg-[#141414] hover:bg-[#1C1C1C] text-[#F2F2F2] border border-white/5 px-4 py-2.5 rounded-lg transition-all shrink-0 hover:border-[#E53935]/50">
+        <button onclick="submitPreset('ලස්සන සිංහල කවියක් කියන්න')" class="text-[10px] uppercase tracking-wider font-bold bg-[#141414] hover:bg-[#1C1C1C] text-[#F2F2F2] border border-white/5 px-4 py-2.5 rounded-lg transition-all shrink-0 hover:border-[#E53935]/50 cursor-pointer">
           කවියක් කියන්න 📝
         </button>
-        <button onclick="submitPreset('කෙටි සිංහල ජන කතාවක් කියන්න')" class="text-[11px] uppercase tracking-wider font-bold bg-[#141414] hover:bg-[#1C1C1C] text-[#F2F2F2] border border-white/5 px-4 py-2.5 rounded-lg transition-all shrink-0 hover:border-[#E53935]/50">
+        <button onclick="submitPreset('කෙටි සිංහල ජන කතාවක් කියන්න')" class="text-[10px] uppercase tracking-wider font-bold bg-[#141414] hover:bg-[#1C1C1C] text-[#F2F2F2] border border-white/5 px-4 py-2.5 rounded-lg transition-all shrink-0 hover:border-[#E53935]/50 cursor-pointer">
           ජන කතාවක් 🌾
         </button>
-        <button onclick="submitPreset('ශ්‍රී ලංකාවේ ප්‍රසිද්ධ සංචාරක ස්ථාන මොනවාද?')" class="text-[11px] uppercase tracking-wider font-bold bg-[#141414] hover:bg-[#1C1C1C] text-[#F2F2F2] border border-white/5 px-4 py-2.5 rounded-lg transition-all shrink-0 hover:border-[#E53935]/50">
+        <button onclick="submitPreset('ශ්‍රී ලංකාවේ ප්‍රසිද්ධ සංචාරක ස්ථාන මොනවාද?')" class="text-[10px] uppercase tracking-wider font-bold bg-[#141414] hover:bg-[#1C1C1C] text-[#F2F2F2] border border-white/5 px-4 py-2.5 rounded-lg transition-all shrink-0 hover:border-[#E53935]/50 cursor-pointer">
           සංචාරක ස්ථාන 🗺️
         </button>
-        <button onclick="submitPreset('කිරි බත් සාදන ආකාරය කියන්න')" class="text-[11px] uppercase tracking-wider font-bold bg-[#141414] hover:bg-[#1C1C1C] text-[#F2F2F2] border border-white/5 px-4 py-2.5 rounded-lg transition-all shrink-0 hover:border-[#E53935]/50">
+        <button onclick="submitPreset('කිරි බත් සාදන ආකාරය කියන්න')" class="text-[10px] uppercase tracking-wider font-bold bg-[#141414] hover:bg-[#1C1C1C] text-[#F2F2F2] border border-white/5 px-4 py-2.5 rounded-lg transition-all shrink-0 hover:border-[#E53935]/50 cursor-pointer">
           කෑම වට්ටෝරුවක් 🍲
         </button>
       </div>
 
-      <!-- Bottom Primary Interactive Action Dock -->
+      <!-- Input Dock Section -->
       <div class="border-t border-white/5 pt-4 shrink-0 bg-[#0D0D0D]">
         
-        <!-- Continuous Interaction Mode Bar -->
+        <!-- Hands-Free auto continuous speech controller -->
         <div class="flex items-center justify-between mb-4 bg-[#141414] border border-white/5 px-4 py-3 rounded-xl">
           <div class="flex flex-col">
-            <span class="text-xs uppercase tracking-wider font-bold text-[#F2F2F2]">Continuous Interaction Mode</span>
+            <span class="text-xs uppercase tracking-wider font-bold text-[#F2F2F2]">Continuous Talking Mode</span>
             <span class="text-[10px] text-[#737373] mt-0.5">AI කතා කර අවසන් වූ පසු මයික්‍රෆෝනය ඉබේම ක්‍රියාත්මක වේ.</span>
           </div>
           <button
@@ -178,8 +278,8 @@
           </button>
         </div>
 
-        <!-- Text Input Mode UI -->
-        <div id="text-mode-container" class="hidden flex items-center gap-3">
+        <!-- Text Input layout -->
+        <div id="text-input-container" class="hidden flex items-center gap-3">
           <input
             id="text-input"
             type="text"
@@ -194,33 +294,35 @@
           </button>
         </div>
 
-        <!-- Voice Mode UI (Main Circular Action Button) -->
-        <div id="voice-mode-container" class="flex flex-col items-center py-2">
+        <!-- Voice microphone main circular button -->
+        <div id="voice-input-container" class="flex flex-col items-center py-2">
           <div class="relative flex items-center justify-center">
-            <div id="pulse-ring-listening" class="hidden absolute inset-0 bg-[#E53935]/20 rounded-full animate-ping scale-150"></div>
-            <div id="pulse-ring-speaking" class="hidden absolute inset-0 bg-emerald-500/10 rounded-full animate-ping scale-125"></div>
+            <div id="ring-listening" class="hidden absolute inset-0 bg-[#E53935]/20 rounded-full animate-ping scale-150"></div>
+            <div id="ring-speaking" class="hidden absolute inset-0 bg-emerald-500/10 rounded-full animate-ping scale-125"></div>
 
             <button
               id="btn-mic"
-              class="w-16 h-16 rounded-2xl flex flex-col items-center justify-center transition-all transform hover:scale-105 active:scale-95 cursor-pointer bg-[#E53935] hover:bg-[#C62828] text-white"
+              class="w-20 h-20 rounded-2xl flex flex-col items-center justify-center transition-all transform hover:scale-105 active:scale-95 cursor-pointer bg-[#E53935] hover:bg-[#C62828] text-white shadow-lg shadow-[#E53935]/10"
             >
-              <i data-lucide="mic" id="mic-icon" class="w-6 h-6"></i>
+              <i data-lucide="mic" id="mic-icon" class="w-7 h-7"></i>
             </button>
           </div>
 
-          <span id="mic-status" class="text-[11px] uppercase tracking-widest font-mono font-bold mt-3 text-[#737373]">
-            Tap to speak in Sinhala
+          <span id="mic-status-label" class="text-[11px] uppercase tracking-widest font-mono font-bold mt-3 text-[#737373]">
+            Mic Active / Capturing Sinhala Speech
           </span>
         </div>
 
-        <!-- Mode Toggle Trigger at structural margin -->
+        <!-- Meta foot & switch to text mode trigger -->
         <div class="flex justify-between items-center mt-4 pt-4 border-t border-white/5">
-          <div class="flex space-x-6 text-[10px] uppercase tracking-widest text-[#737373] font-bold">
-            <span>v3.1.0-Lite</span>
-            <span>Cloudflare Edge Enabled</span>
-          </div>
           <button
-            id="btn-input-toggle"
+            id="btn-clear-history"
+            class="text-[10px] uppercase tracking-widest font-bold text-[#737373] hover:text-[#F2F2F2] flex items-center gap-1 cursor-pointer"
+          >
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Clear Chat
+          </button>
+          <button
+            id="btn-toggle-input"
             class="text-[10px] uppercase tracking-widest font-bold text-[#E53935] hover:underline cursor-pointer"
           >
             Switch to Text Mode
@@ -231,22 +333,24 @@
 
     </div>
 
-    <!-- RIGHT PANEL: Collapsible Admin Settings Console -->
-    <!-- Triggered via pressing "A" keyboard key or header icon -->
+    <!-- COLLAPSIBLE ADMIN PANEL (Unlocks via PIN: 2010 on 'A' key shortcut) -->
     <div id="admin-panel" class="hidden md:flex w-full md:w-[380px] bg-[#0A0A0A] border-t md:border-t-0 border-white/5 flex-col p-8 shrink-0 relative animate-fade-in">
       
-      <div class="mb-10">
-        <h2 class="text-2xl font-serif font-bold italic text-[#F2F2F2] flex items-center gap-2">
-          Admin Settings
-        </h2>
-        <div class="h-[2px] w-12 bg-[#E53935] mt-2"></div>
+      <div class="mb-8 flex justify-between items-center">
+        <div>
+          <h2 class="text-2xl font-serif font-bold italic text-[#F2F2F2]">Admin Console</h2>
+          <div class="h-[2px] w-12 bg-[#E53935] mt-2"></div>
+        </div>
+        <button id="btn-close-admin" class="text-[#737373] hover:text-[#F2F2F2] p-1 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
       </div>
 
-      <div class="flex-1 space-y-8 overflow-y-auto no-scrollbar">
+      <div class="flex-1 space-y-6 overflow-y-auto no-scrollbar">
         
-        <!-- Credentials / API Key -->
-        <section class="space-y-3">
-          <span class="text-[10px] uppercase tracking-widest text-[#737373] font-bold block">Access Credentials</span>
+        <!-- Access Tokens / API Key Input -->
+        <section class="space-y-2">
+          <span class="text-[10px] uppercase tracking-widest text-[#737373] font-bold block">Authorization Credentials</span>
           <div class="bg-[#141414] border border-white/5 rounded-xl p-4 space-y-3">
             <label class="block text-[11px] text-[#737373] font-mono">GEMINI API KEY</label>
             <div class="relative">
@@ -258,7 +362,7 @@
               >
               <button
                 id="btn-show-key"
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-[#737373] hover:text-[#F2F2F2]"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-[#737373] hover:text-[#F2F2F2] cursor-pointer"
               >
                 <i data-lucide="eye" class="w-4 h-4" id="eye-icon"></i>
               </button>
@@ -269,32 +373,32 @@
           </div>
         </section>
 
-        <!-- Voice engine configuration -->
+        <!-- Voice profile customization params -->
         <section class="space-y-4">
           <div>
-            <span class="text-[10px] uppercase tracking-widest text-[#737373] font-bold block mb-2">Voice Engine</span>
+            <span class="text-[10px] uppercase tracking-widest text-[#737373] font-bold block mb-2">Speech Synthesizer Mode</span>
             <div class="bg-[#141414] p-1 rounded-lg border border-white/5 flex">
               <button
                 id="engine-gemini"
-                class="flex-1 text-[10px] uppercase tracking-widest py-2 font-bold rounded transition-all bg-[#E53935] text-white"
+                class="flex-1 text-[10px] uppercase tracking-widest py-2 font-bold rounded transition-all bg-[#E53935] text-white cursor-pointer"
               >
                 Gemini AI Voice
               </button>
               <button
                 id="engine-system"
-                class="flex-1 text-[10px] uppercase tracking-widest py-2 font-bold rounded transition-all text-[#737373] hover:text-[#F2F2F2]"
+                class="flex-1 text-[10px] uppercase tracking-widest py-2 font-bold rounded transition-all text-[#737373] hover:text-[#F2F2F2] cursor-pointer"
               >
                 System TTS
               </button>
             </div>
           </div>
 
-          <!-- Prebuilt high-fidelity voices selection -->
+          <!-- Prebuilt female/male voices selector under Gemini engine -->
           <div id="gemini-voices-group">
             <span class="text-[10px] uppercase tracking-widest text-[#737373] font-bold block mb-2">Select Gemini Voice Profile</span>
             <select
               id="select-gemini-voice"
-              class="w-full bg-[#141414] border border-white/10 text-xs text-[#F2F2F2] rounded-lg py-2.5 px-3 focus:outline-none focus:border-[#E53935]"
+              class="w-full bg-[#141414] border border-white/10 text-xs text-[#F2F2F2] rounded-lg py-2.5 px-3 focus:outline-none focus:border-[#E53935] cursor-pointer font-sans"
             >
               <option value="Puck">Puck (Energetic Girl / කෙල්ලෙක්ගේ කටහඬ) ⭐</option>
               <option value="Kore">Kore (Warm Female / මෘදු කාන්තා කටහඬ)</option>
@@ -304,18 +408,18 @@
             </select>
           </div>
 
-          <!-- Native web synthesis voice selection fallback -->
-          <div id="system-voices-group" class="hidden">
+          <!-- Web Speech Synthesis Voice Select fallback -->
+          <div id="system-voices-group" class="hidden font-sans">
             <span class="text-[10px] uppercase tracking-widest text-[#737373] font-bold block mb-2">Select Local System Voice</span>
             <select
               id="select-system-voice"
-              class="w-full bg-[#141414] border border-white/10 text-xs text-[#F2F2F2] rounded-lg py-2.5 px-3 focus:outline-none focus:border-[#E53935]"
+              class="w-full bg-[#141414] border border-white/10 text-xs text-[#F2F2F2] rounded-lg py-2.5 px-3 focus:outline-none focus:border-[#E53935] cursor-pointer"
             >
               <option value="">Default System Engine</option>
             </select>
           </div>
 
-          <!-- Range speed and pitch adjust sliders -->
+          <!-- Speech velocity range settings -->
           <div class="grid grid-cols-2 gap-4 bg-[#141414] border border-white/5 rounded-xl p-4">
             <div>
               <div class="flex justify-between items-center mb-1">
@@ -352,7 +456,7 @@
 
         </section>
 
-        <!-- Dynamic vocal system diagnostics tests -->
+        <!-- Test diagnostic button -->
         <section class="pt-2">
           <button
             id="btn-voice-test"
@@ -368,7 +472,7 @@
 
   </div>
 
-  <!-- PASSWORD PROMPT MODAL -->
+  <!-- PASSWORD AUTHORIZATION MODAL -->
   <div id="password-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 animate-fade-in">
     <div class="bg-[#141414] border border-white/10 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
       <div class="flex justify-between items-center border-b border-white/5 pb-3 mb-5">
@@ -401,7 +505,7 @@
 
         <p id="password-error" class="hidden text-xs text-[#E53935] font-bold flex items-center gap-1.5 animate-pulse">
           <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
-          <span>වැරදි මුරපදයක්! නැවත උත්සාහ කරන්න.</span>
+          <span>වැරදි මුරපදයක්! නැවත උත්සාහ කරන්න. (Hint: 2010)</span>
         </p>
 
         <div class="flex gap-2">
@@ -423,9 +527,9 @@
     </div>
   </div>
 
-  <!-- JAVASCRIPT: High-Performance Pure Dynamic Interactive Controller -->
+  <!-- MAIN JAVASCRIPT APP ARCHITECTURE AND AUDIO PIPELINE -->
   <script>
-    // App Operational Configurations
+    // System states
     let isTextMode = false;
     let isContinuousMode = false;
     let isListening = false;
@@ -440,7 +544,7 @@
       }
     ];
 
-    // Read Key and Settings safely (Supports direct environment injections and LocalStorage)
+    // Load credentials & configs securely (Cloudflare / Local Storage)
     let apiKey = window.CLOUDFLARE_GEMINI_API_KEY || window.ENV_GEMINI_API_KEY || localStorage.getItem("viru_ai_api_key") || "";
     let voiceProvider = localStorage.getItem("viru_ai_voice_provider") || "gemini";
     let geminiVoice = localStorage.getItem("viru_ai_gemini_voice") || "Puck";
@@ -450,23 +554,26 @@
 
     let activeAudio = null;
     let systemVoices = [];
+    let lipSyncInterval = null;
 
-    // DOM bindings
+    // DOM Elements Binding
     const dialogueBox = document.getElementById("dialogue-box");
-    const textModeContainer = document.getElementById("text-mode-container");
-    const voiceModeContainer = document.getElementById("voice-mode-container");
-    const btnInputToggle = document.getElementById("btn-input-toggle");
+    const textInputContainer = document.getElementById("text-input-container");
+    const voiceInputContainer = document.getElementById("voice-input-container");
+    const btnToggleInput = document.getElementById("btn-toggle-input");
     const textInput = document.getElementById("text-input");
     const btnSendText = document.getElementById("btn-send-text");
     const btnMic = document.getElementById("btn-mic");
     const micIcon = document.getElementById("mic-icon");
-    const micStatus = document.getElementById("mic-status");
-    const pulseRingListening = document.getElementById("pulse-ring-listening");
-    const pulseRingSpeaking = document.getElementById("pulse-ring-speaking");
-    const waveformLabel = document.getElementById("waveform-label");
-    const headerStatusIndicator = document.getElementById("header-status-indicator");
+    const micStatusLabel = document.getElementById("mic-status-label");
+    const ringListening = document.getElementById("ring-listening");
+    const ringSpeaking = document.getElementById("ring-speaking");
+    const avatarStatusDot = document.getElementById("avatar-status-dot");
+    const actionHintLabel = document.getElementById("action-hint-label");
+    const syncDiagnostic = document.getElementById("sync-diagnostic");
     const sttErrorBar = document.getElementById("stt-error-bar");
     const sttErrorText = document.getElementById("stt-error-text");
+    const btnClearHistory = document.getElementById("btn-clear-history");
 
     const btnContinuous = document.getElementById("btn-continuous");
     const adminPanel = document.getElementById("admin-panel");
@@ -476,6 +583,8 @@
     const passwordError = document.getElementById("password-error");
     const btnCloseModal = document.getElementById("btn-close-modal");
     const btnCancelModal = document.getElementById("btn-cancel-modal");
+    const btnCloseAdmin = document.getElementById("btn-close-admin");
+    const btnSettingsToggle = document.getElementById("btn-settings-toggle");
 
     const apiKeyInput = document.getElementById("api-key");
     const btnShowKey = document.getElementById("btn-show-key");
@@ -491,8 +600,9 @@
     const speedIndicator = document.getElementById("speed-indicator");
     const pitchIndicator = document.getElementById("pitch-indicator");
     const btnVoiceTest = document.getElementById("btn-voice-test");
+    const mouthPath = document.getElementById("mouth-path");
 
-    // Initialize DOM parameters
+    // Initialize inputs and slider parameter values
     if (apiKey) apiKeyInput.value = apiKey;
     selectGeminiVoice.value = geminiVoice;
     sliderSpeed.value = voiceSpeed;
@@ -500,46 +610,32 @@
     speedIndicator.textContent = voiceSpeed.toFixed(1) + "x";
     pitchIndicator.textContent = voicePitch.toFixed(1);
 
-    // Dynamic wave animation loop
-    const wavePath1 = document.getElementById("wave-path-1");
-    const wavePath2 = document.getElementById("wave-path-2");
-    
-    function renderWave(timestamp) {
-      let amp = 3;
-      let freq = 0.008;
-
-      if (isListening) {
-        amp = 24;
-        freq = 0.024;
-      } else if (isThinking) {
-        amp = 10;
-        freq = 0.038;
-      } else if (isSpeaking) {
-        amp = 20;
-        freq = 0.016;
-      }
-
-      const offset1 = timestamp * freq;
-      const offset2 = timestamp * (freq * 0.72) + 120;
-
-      let d1 = "M 0 50";
-      let d2 = "M 0 50";
-
-      for (let x = 0; x <= 400; x += 8) {
-        const y1 = 50 + Math.sin(x * 0.025 + offset1) * amp;
-        const y2 = 50 + Math.sin(x * 0.018 + offset2) * amp * 0.75;
-        d1 += ` L ${x} ${y1}`;
-        d2 += ` L ${x} ${y2}`;
-      }
-
-      wavePath1.setAttribute("d", d1);
-      wavePath2.setAttribute("d", d2);
-
-      requestAnimationFrame(renderWave);
+    // DYNAMIC REALTIME LIP-SYNC ALGORITHM & MOUTH MORPH ENGINE
+    // Smoothly morphs the SVG mouth path node over random intervals when 'isSpeaking' is active
+    function animateLipSync() {
+      if (lipSyncInterval) clearInterval(lipSyncInterval);
+      
+      lipSyncInterval = setInterval(() => {
+        if (isSpeaking) {
+          // Speak State: Morph mouth shape extensively to simulate human talking syllables
+          const rndHeight = Math.floor(Math.random() * 22) + 6; // random vertical talking opening
+          const rndWidthOffset = Math.floor(Math.random() * 8) - 4; // micro-width variations
+          const openMouthPath = `M${185 + rndWidthOffset} 255 Q200 ${255 + rndHeight} ${215 - rndWidthOffset} 255 Q200 ${256 - (rndHeight/4)} ${185 + rndWidthOffset} 255 Z`;
+          mouthPath.setAttribute("d", openMouthPath);
+          syncDiagnostic.textContent = "ACTIVE (TALKING)";
+          syncDiagnostic.className = "text-[#E53935] font-black";
+        } else {
+          // Idle State: Classic organic human gentle smile curves
+          const idleMouthPath = "M185 255 Q200 261 215 255 Q200 258 185 255 Z";
+          mouthPath.setAttribute("d", idleMouthPath);
+          syncDiagnostic.textContent = "OFF";
+          syncDiagnostic.className = "text-[#737373]";
+        }
+      }, 110);
     }
-    requestAnimationFrame(renderWave);
+    animateLipSync();
 
-    // Toggle Voice Engine Configuration
+    // Toggle Voice Engine UI Configurations
     function applyVoiceEngineUI() {
       if (voiceProvider === "gemini") {
         engineGemini.className = "flex-1 text-[10px] uppercase tracking-widest py-2 font-bold rounded transition-all bg-[#E53935] text-white cursor-pointer";
@@ -569,7 +665,7 @@
       applyVoiceEngineUI();
     });
 
-    // Populate System Synthesizer Voices
+    // Populate local speech voices
     function loadSystemVoices() {
       if (typeof speechSynthesis === "undefined") return;
       systemVoices = speechSynthesis.getVoices();
@@ -590,7 +686,7 @@
       loadSystemVoices();
     }
 
-    // Speech Recognition initialization (STT)
+    // Web Speech API Capture (STT) setup
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       recognition = new SpeechRecognition();
@@ -614,7 +710,7 @@
       };
 
       recognition.onerror = (event) => {
-        console.error("Speech capturing failed:", event.error);
+        console.error("Speech Recognition capture error:", event.error);
         isListening = false;
         renderUI();
         if (event.error === "no-speech") {
@@ -629,6 +725,15 @@
       recognition.onend = () => {
         isListening = false;
         renderUI();
+        
+        // Auto-retrigger mic loop when Continuous Mode is ON and we are fully idle
+        if (isContinuousMode && !isTextMode && !isSpeaking && !isThinking) {
+          setTimeout(() => {
+            if (!isListening && !isSpeaking && !isThinking) {
+              startListening();
+            }
+          }, 800);
+        }
       };
     }
 
@@ -659,7 +764,7 @@
       sttErrorBar.classList.remove("hidden");
     }
 
-    // Speak voice output using system synthesis
+    // Speak voice output utilizing local system engine
     function speakSystemTTS(text) {
       if (typeof speechSynthesis === "undefined") return;
       const cleanText = text.replace(/[\*\_~`#]/g, "").trim();
@@ -697,7 +802,7 @@
       speechSynthesis.speak(utterance);
     }
 
-    // Play base64 dynamic audio stream buffer
+    // Play high fidelity base64 audio payload
     function playAudioBase64(base64Data) {
       try {
         const binaryString = atob(base64Data);
@@ -958,13 +1063,13 @@ Tell them something like: "I cannot change the language from the chat! If you wa
     function renderUI() {
       // Toggle inputs based on layout parameters
       if (isTextMode) {
-        textModeContainer.classList.remove("hidden");
-        voiceModeContainer.classList.add("hidden");
-        btnInputToggle.textContent = "Switch to Voice Mode";
+        textInputContainer.classList.remove("hidden");
+        voiceInputContainer.classList.add("hidden");
+        btnToggleInput.textContent = "Switch to Voice Mode";
       } else {
-        textModeContainer.classList.add("hidden");
-        voiceModeContainer.classList.remove("hidden");
-        btnInputToggle.textContent = "Switch to Text Mode";
+        textInputContainer.classList.add("hidden");
+        voiceInputContainer.classList.remove("hidden");
+        btnToggleInput.textContent = "Switch to Text Mode";
       }
 
       // Continuous mode button
@@ -978,45 +1083,45 @@ Tell them something like: "I cannot change the language from the chat! If you wa
 
       // Microscopic visual indicator states
       if (isListening) {
-        headerStatusIndicator.className = "w-1.5 h-1.5 rounded-full bg-red-500 animate-ping";
-        waveformLabel.className = "text-red-500 animate-pulse font-mono uppercase tracking-[0.2em]";
-        waveformLabel.textContent = "Capturing Audio";
-        micStatus.className = "text-[11px] uppercase tracking-widest font-mono font-bold mt-3 text-red-500 animate-pulse";
-        micStatus.textContent = "Capturing Sinhala Speech...";
+        avatarStatusDot.className = "w-2 h-2 rounded-full bg-red-500 animate-ping";
+        actionHintLabel.className = "text-xs uppercase tracking-widest text-red-500 animate-pulse font-mono";
+        actionHintLabel.textContent = "Capturing Speech...";
+        micStatusLabel.className = "text-[11px] uppercase tracking-widest font-mono font-bold mt-3 text-red-500 animate-pulse";
+        micStatusLabel.textContent = "Listening to Sinhala Voice...";
         micIcon.setAttribute("data-lucide", "mic-off");
-        btnMic.className = "w-16 h-16 rounded-2xl flex flex-col items-center justify-center transition-all transform scale-105 cursor-pointer bg-red-600 text-white shadow-lg shadow-red-600/25";
-        pulseRingListening.classList.remove("hidden");
-        pulseRingSpeaking.classList.add("hidden");
+        btnMic.className = "w-20 h-20 rounded-2xl flex flex-col items-center justify-center transition-all transform scale-105 cursor-pointer bg-red-600 text-white shadow-lg shadow-red-600/25";
+        ringListening.classList.remove("hidden");
+        ringSpeaking.classList.add("hidden");
       } else if (isSpeaking) {
-        headerStatusIndicator.className = "w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse";
-        waveformLabel.className = "text-emerald-500 animate-pulse font-mono uppercase tracking-[0.2em]";
-        waveformLabel.textContent = "Synthesizing Output";
-        micStatus.className = "text-[11px] uppercase tracking-widest font-mono font-bold mt-3 text-emerald-500 animate-pulse cursor-pointer";
-        micStatus.textContent = "Tap Mic to Stop Speech Output";
+        avatarStatusDot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
+        actionHintLabel.className = "text-xs uppercase tracking-widest text-emerald-500 animate-pulse font-mono";
+        actionHintLabel.textContent = "Speaking Out Loud";
+        micStatusLabel.className = "text-[11px] uppercase tracking-widest font-mono font-bold mt-3 text-emerald-500 animate-pulse cursor-pointer";
+        micStatusLabel.textContent = "Tap to Stop Voice Playback";
         micIcon.setAttribute("data-lucide", "volume-x");
-        btnMic.className = "w-16 h-16 rounded-2xl flex flex-col items-center justify-center transition-all transform scale-105 cursor-pointer bg-emerald-600 text-white shadow-lg shadow-emerald-600/25";
-        pulseRingListening.classList.add("hidden");
-        pulseRingSpeaking.classList.remove("hidden");
+        btnMic.className = "w-20 h-20 rounded-2xl flex flex-col items-center justify-center transition-all transform scale-105 cursor-pointer bg-emerald-600 text-white shadow-lg shadow-emerald-600/25";
+        ringListening.classList.add("hidden");
+        ringSpeaking.classList.remove("hidden");
       } else if (isThinking) {
-        headerStatusIndicator.className = "w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse";
-        waveformLabel.className = "text-amber-500 animate-pulse font-mono uppercase tracking-[0.2em]";
-        waveformLabel.textContent = "Evaluating Context";
-        micStatus.className = "text-[11px] uppercase tracking-widest font-mono font-bold mt-3 text-amber-500 animate-pulse";
-        micStatus.textContent = "Processing response query...";
+        avatarStatusDot.className = "w-2 h-2 rounded-full bg-amber-500 animate-pulse";
+        actionHintLabel.className = "text-xs uppercase tracking-widest text-amber-500 animate-pulse font-mono";
+        actionHintLabel.textContent = "Thinking Response";
+        micStatusLabel.className = "text-[11px] uppercase tracking-widest font-mono font-bold mt-3 text-amber-500 animate-pulse";
+        micStatusLabel.textContent = "Gemini is thinking...";
         micIcon.setAttribute("data-lucide", "sparkles");
-        btnMic.className = "w-16 h-16 rounded-2xl flex flex-col items-center justify-center transition-all scale-95 cursor-wait bg-amber-500 text-white";
-        pulseRingListening.classList.add("hidden");
-        pulseRingSpeaking.classList.add("hidden");
+        btnMic.className = "w-20 h-20 rounded-2xl flex flex-col items-center justify-center transition-all scale-95 cursor-wait bg-amber-500 text-white";
+        ringListening.classList.add("hidden");
+        ringSpeaking.classList.add("hidden");
       } else {
-        headerStatusIndicator.className = "w-1.5 h-1.5 rounded-full bg-[#E53935]";
-        waveformLabel.className = "text-[#737373] font-mono uppercase tracking-[0.2em]";
-        waveformLabel.textContent = "Standby";
-        micStatus.className = "text-[11px] uppercase tracking-widest font-mono font-bold mt-3 text-[#737373]";
-        micStatus.textContent = "Tap to speak in Sinhala";
+        avatarStatusDot.className = "w-2 h-2 rounded-full bg-emerald-500";
+        actionHintLabel.className = "text-xs uppercase tracking-widest text-[#737373] font-mono";
+        actionHintLabel.textContent = "Standby / Ready";
+        micStatusLabel.className = "text-[11px] uppercase tracking-widest font-mono font-bold mt-3 text-[#737373]";
+        micStatusLabel.textContent = "Tap Mic to speak in Sinhala";
         micIcon.setAttribute("data-lucide", "mic");
-        btnMic.className = "w-16 h-16 rounded-2xl flex flex-col items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer bg-[#E53935] hover:bg-[#C62828] text-white";
-        pulseRingListening.classList.add("hidden");
-        pulseRingSpeaking.classList.add("hidden");
+        btnMic.className = "w-20 h-20 rounded-2xl flex flex-col items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer bg-[#E53935] hover:bg-[#C62828] text-white";
+        ringListening.classList.add("hidden");
+        ringSpeaking.classList.add("hidden");
       }
 
       lucide.createIcons();
@@ -1055,6 +1160,17 @@ Tell them something like: "I cannot change the language from the chat! If you wa
 
     btnCancelModal.addEventListener("click", () => {
       passwordModal.classList.add("hidden");
+    });
+
+    btnCloseAdmin.addEventListener("click", () => {
+      adminPanel.classList.add("hidden");
+    });
+
+    btnSettingsToggle.addEventListener("click", () => {
+      passwordInput.value = "";
+      passwordError.classList.add("hidden");
+      passwordModal.classList.remove("hidden");
+      passwordInput.focus();
     });
 
     // Toggle credentials visibility
@@ -1106,35 +1222,48 @@ Tell them something like: "I cannot change the language from the chat! If you wa
       renderUI();
     });
 
-    btnInputToggle.addEventListener("click", () => {
+    // Toggle text input versus voice capturing layout
+    btnToggleInput.addEventListener("click", () => {
       isTextMode = !isTextMode;
       renderUI();
-      if (isTextMode) {
-        textInput.focus();
+    });
+
+    // Submit user typing input
+    btnSendText.addEventListener("click", () => {
+      const val = textInput.value.trim();
+      if (val) {
+        appendMessage("user", val);
+        communicateGemini(val);
+        textInput.value = "";
       }
     });
 
-    // Keyboard keys handler for input fields
     textInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
-        const value = textInput.value.trim();
-        if (value) {
+        const val = textInput.value.trim();
+        if (val) {
+          appendMessage("user", val);
+          communicateGemini(val);
           textInput.value = "";
-          appendMessage("user", value);
-          communicateGemini(value);
         }
       }
     });
 
-    btnSendText.addEventListener("click", () => {
-      const value = textInput.value.trim();
-      if (value) {
-        textInput.value = "";
-        appendMessage("user", value);
-        communicateGemini(value);
-      }
+    // Reset history logs
+    btnClearHistory.addEventListener("click", () => {
+      messages = [
+        {
+          id: Date.now(),
+          role: "model",
+          text: "ආයුබෝවන්! සංවාදය නැවත ආරම්භ කරන ලදී. මට සිංහලෙන් ඕනෑම ප්‍රශ්නයක් අසන්න. 🌸"
+        }
+      ];
+      dialogueBox.innerHTML = "";
+      appendMessage("model", messages[0].text);
+      stopAudioPlayback();
     });
 
+    // Main Microphone Switch Trigger
     btnMic.addEventListener("click", () => {
       if (isSpeaking) {
         stopAudioPlayback();
@@ -1147,10 +1276,17 @@ Tell them something like: "I cannot change the language from the chat! If you wa
       }
     });
 
-    // On Load Initialization
+    // Initialize triggers on window load
     window.addEventListener("DOMContentLoaded", () => {
       lucide.createIcons();
       renderUI();
+      
+      // AUTO MICROPHONE TRIGGER INITIATIVE FOR USER COMFORT ON SITE ENTER
+      setTimeout(() => {
+        if (!isListening && !isSpeaking && !isThinking) {
+          startListening();
+        }
+      }, 1500);
     });
   </script>
 </body>
