@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hela AI - Sinhala Talking Assistant</title>
+  <title>Hela AI - Sinhala Voice Assistant</title>
   
   <!-- Tailwind CSS v3 CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -82,7 +82,7 @@
         <h1 class="text-lg font-black tracking-tight text-indigo-950 flex items-center gap-1.5 font-display">
           HELA AI <span class="text-[10px] text-indigo-600 font-extrabold px-2 py-0.5 rounded-full bg-indigo-50">සිංහල කටහඬ</span>
         </h1>
-        <p class="text-[10px] font-bold text-indigo-400">ඔබේ හඬට සවන් දෙන කෘත්‍රිම බුද්ධි සහායකයා</p>
+        <p class="text-[10px] font-bold text-indigo-400 font-sans">ස්වභාවික කෙල්ලෙක්ගේ කටහඬින් කතා කරන සහායකයා</p>
       </div>
     </div>
 
@@ -216,24 +216,53 @@
         </span>
       </div>
 
-      <!-- Advanced Model Selection dropdown -->
+      <!-- Advanced Voice Engine/Provider Selector -->
       <div>
         <label class="block text-xs font-bold text-indigo-900/80 mb-1.5 flex items-center gap-1.5">
           <i data-lucide="cpu" class="w-3.5 h-3.5 text-indigo-500"></i>
-          කෘත්‍රිම බුද්ධි ආකෘතිය (Select Gemini Model)
+          කටහඬ තාක්ෂණය (Voice Engine)
         </label>
-        <select id="model-select" class="w-full bg-indigo-50/50 border border-indigo-100 text-indigo-950 text-xs font-bold rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-200">
-          <option value="gemini-1.5-flash" selected>Gemini 1.5 Flash (වේගවත් / Low Latency) ⭐</option>
-          <option value="gemini-2.5-flash">Gemini 2.5 Flash (නවම සංස්කරණය / Ultra Fast)</option>
-          <option value="gemini-1.5-pro">Gemini 1.5 Pro (වැඩි දියුණු කල බුද්ධි මට්ටම / Smartest)</option>
-        </select>
+        <div class="bg-indigo-50/50 p-1 rounded-2xl border border-indigo-100 flex">
+          <button
+            type="button"
+            id="toggle-provider-gemini"
+            class="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-black rounded-xl transition-all"
+          >
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            Gemini AI Voice (ස්වභාවික AI)
+          </button>
+          <button
+            type="button"
+            id="toggle-provider-system"
+            class="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-black rounded-xl transition-all"
+          >
+            <i data-lucide="globe" class="w-3.5 h-3.5"></i>
+            System TTS (පද්ධති කටහඬ)
+          </button>
+        </div>
       </div>
 
-      <!-- Voice Selection dropdown list -->
-      <div>
+      <!-- Gemini Prebuilt Voice Picker -->
+      <div id="gemini-voice-block">
         <label class="block text-xs font-bold text-indigo-900/80 mb-1.5 flex items-center gap-1.5">
-          <i data-lucide="globe" class="w-3.5 h-3.5 text-indigo-500"></i>
-          කටහඬ තෝරන්න (Select System Text-to-Speech Voice)
+          <i data-lucide="user" class="w-3.5 h-3.5 text-indigo-500"></i>
+          Gemini කටහඬ තෝරන්න (Select Gemini AI Voice)
+        </label>
+        <select id="gemini-voice-select" class="w-full bg-indigo-50/50 border border-indigo-100 text-indigo-950 text-xs font-bold rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+          <option value="Puck">Puck (Energetic Young Girl / කෙල්ලෙක්ගේ කටහඬ) ⭐</option>
+          <option value="Kore">Kore (Warm Female / මෘදු කාන්තා කටහඬ)</option>
+          <option value="Zephyr">Zephyr (Bright Female / පැහැදිලි කාන්තා කටහඬ)</option>
+          <option value="Charon">Charon (Deep Male / ගම්භීර පිරිමි කටහඬ)</option>
+          <option value="Fenrir">Fenrir (Casual Male / සාමාන්‍ය පිරිමි කටහඬ)</option>
+        </select>
+        <p class="text-[10px] text-indigo-500/80 mt-1 font-medium">* Puck යනු ඉතා ස්වභාවික, ආකර්ෂණීය තරුණ ගැහැණු ළමයෙකුගේ කටහඬකි (තරුණ කෙල්ලකගේ කටහඬ).</p>
+      </div>
+
+      <!-- System Text-to-Speech Voice Picker (Hidden by default unless selected) -->
+      <div id="system-voice-block" class="hidden">
+        <label class="block text-xs font-bold text-indigo-900/80 mb-1.5 flex items-center gap-1.5">
+          <i data-lucide="volume-2" class="w-3.5 h-3.5 text-indigo-500"></i>
+          පද්ධති කටහඬ තෝරන්න (Select System Voice)
         </label>
         <select id="voice-select" class="w-full bg-indigo-50/50 border border-indigo-100 text-indigo-950 text-xs font-bold rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-200">
           <option value="">පෙරනිමි කටහඬ (System Default)</option>
@@ -361,13 +390,18 @@
     let voicesList = [];
     let messages = [];
 
-    // Local Storage values with automatic fallback for Cloudflare Pages/Workers placeholders
-    // Cloudflare users can define their keys globally as `window.CLOUDFLARE_GEMINI_API_KEY` or `window.ENV_GEMINI_API_KEY`
+    // WebAudio instances to prevent memory leakage
+    let activeAudio = null;
+    let activeSourceNode = null;
+    let activeAudioCtx = null;
+
+    // Load configurations
     let apiKey = window.CLOUDFLARE_GEMINI_API_KEY || window.ENV_GEMINI_API_KEY || localStorage.getItem("hela_ai_api_key") || "";
     let voiceSpeed = parseFloat(localStorage.getItem("hela_ai_speed") || "1.0");
     let voicePitch = parseFloat(localStorage.getItem("hela_ai_pitch") || "1.0");
     let savedVoiceName = localStorage.getItem("hela_ai_voice_name") || "";
-    let selectedModel = localStorage.getItem("hela_ai_model") || "gemini-1.5-flash";
+    let voiceProvider = localStorage.getItem("hela_ai_voice_provider") || "gemini"; // Default to high-fidelity Gemini AI voice (Puck/Kore)
+    let geminiVoice = localStorage.getItem("hela_ai_gemini_voice") || "Puck"; // Puck is female young girl
 
     // DOM Nodes Binding
     const btnToggleInputMode = document.getElementById("btn-toggle-input-mode");
@@ -377,8 +411,8 @@
     const settingsPanel = document.getElementById("settings-panel");
     const apiKeyInput = document.getElementById("api-key-input");
     const btnToggleKey = document.getElementById("btn-toggle-key");
-    const modelSelect = document.getElementById("model-select");
     const voiceSelect = document.getElementById("voice-select");
+    const geminiVoiceSelect = document.getElementById("gemini-voice-select");
     const sliderSpeed = document.getElementById("slider-speed");
     const sliderPitch = document.getElementById("slider-pitch");
     const speedVal = document.getElementById("speed-val");
@@ -403,13 +437,48 @@
     const instructionLabel = document.getElementById("instruction-label");
     const eyeIcon = document.getElementById("eye-icon");
 
+    const toggleProviderGemini = document.getElementById("toggle-provider-gemini");
+    const toggleProviderSystem = document.getElementById("toggle-provider-system");
+    const geminiVoiceBlock = document.getElementById("gemini-voice-block");
+    const systemVoiceBlock = document.getElementById("system-voice-block");
+
     // Hydrate parameters on start
     if (apiKey) apiKeyInput.value = apiKey;
     sliderSpeed.value = voiceSpeed;
     sliderPitch.value = voicePitch;
-    modelSelect.value = selectedModel;
     speedVal.textContent = voiceSpeed.toFixed(1) + "x";
     pitchVal.textContent = voicePitch.toFixed(1);
+    geminiVoiceSelect.value = geminiVoice;
+
+    // Set voice provider UI styling
+    function updateProviderUI() {
+      if (voiceProvider === "gemini") {
+        toggleProviderGemini.className = "flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-black rounded-xl transition-all bg-indigo-600 text-white shadow-sm";
+        toggleProviderSystem.className = "flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-black rounded-xl transition-all text-indigo-600 hover:bg-indigo-50";
+        geminiVoiceBlock.classList.remove("hidden");
+        systemVoiceBlock.classList.add("hidden");
+        sliderPitch.disabled = true;
+      } else {
+        toggleProviderGemini.className = "flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-black rounded-xl transition-all text-indigo-600 hover:bg-indigo-50";
+        toggleProviderSystem.className = "flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-black rounded-xl transition-all bg-indigo-600 text-white shadow-sm";
+        geminiVoiceBlock.classList.add("hidden");
+        systemVoiceBlock.classList.remove("hidden");
+        sliderPitch.disabled = false;
+      }
+    }
+    updateProviderUI();
+
+    toggleProviderGemini.addEventListener("click", () => {
+      voiceProvider = "gemini";
+      localStorage.setItem("hela_ai_voice_provider", "gemini");
+      updateProviderUI();
+    });
+
+    toggleProviderSystem.addEventListener("click", () => {
+      voiceProvider = "system";
+      localStorage.setItem("hela_ai_voice_provider", "system");
+      updateProviderUI();
+    });
 
     // Advanced dynamic mathematical SVG wave rendering
     let animId = null;
@@ -518,14 +587,10 @@
       };
     }
 
-    // TTS Vocalization Routine
-    function speakText(text) {
+    // Standard local system voice synthesizer
+    function speakTextSystem(text) {
       if (typeof speechSynthesis === "undefined") return;
-      
-      // Stop current speaker
-      speechSynthesis.cancel();
 
-      // Stripping brackets/asterisks to prevent robot voice reads
       const cleanText = text
         .replace(/[\*\_~`#]/g, "")
         .replace(/\(.*?\)/g, "")
@@ -552,7 +617,6 @@
         isSpeaking = false;
         updateUIState();
         
-        // Continuous flow automatic re-capture
         if (isContinuousMode && !isTextMode && recognition) {
           setTimeout(() => {
             if (!isListening && !isSpeaking && !isThinking) {
@@ -571,9 +635,154 @@
       speechSynthesis.speak(currentSpeechUtterance);
     }
 
+    // High fidelity base64 Audio decoder & player
+    async function playAudioBuffer(base64Data) {
+      try {
+        const binaryString = atob(base64Data);
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+
+        const isWav = bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46; // RIFF
+        const isMp3 = (bytes[0] === 0x49 && bytes[1] === 0x44 && bytes[2] === 0x33) || (bytes[0] === 0xFF && (bytes[1] & 0xE0) === 0xE0);
+
+        isSpeaking = true;
+        updateUIState();
+
+        if (isWav || isMp3) {
+          const mimeType = isWav ? "audio/wav" : "audio/mp3";
+          const blob = new Blob([bytes], { type: mimeType });
+          const url = URL.createObjectURL(blob);
+          activeAudio = new Audio(url);
+          
+          activeAudio.onended = () => {
+            isSpeaking = false;
+            updateUIState();
+            if (isContinuousMode && !isTextMode && recognition) {
+              setTimeout(() => startListening(), 600);
+            }
+          };
+
+          activeAudio.onerror = (e) => {
+            console.error("Audio player error", e);
+            speakTextSystem("කටහඬ ධාවනය කිරීමේ ගැටලුවකි.");
+          };
+
+          await activeAudio.play();
+        } else {
+          // Assume raw 16-bit PCM little-endian at 24kHz
+          const numSamples = len / 2;
+          const floatData = new Float32Array(numSamples);
+          const view = new DataView(bytes.buffer);
+
+          for (let i = 0; i < numSamples; i++) {
+            if (i * 2 + 1 < len) {
+              const sample = view.getInt16(i * 2, true);
+              floatData[i] = sample / 32768;
+            }
+          }
+
+          activeAudioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
+          const buffer = activeAudioCtx.createBuffer(1, numSamples, 24000);
+          buffer.getChannelData(0).set(floatData);
+
+          activeSourceNode = activeAudioCtx.createBufferSource();
+          activeSourceNode.buffer = buffer;
+          activeSourceNode.connect(activeAudioCtx.destination);
+          
+          activeSourceNode.onended = () => {
+            isSpeaking = false;
+            updateUIState();
+            if (isContinuousMode && !isTextMode && recognition) {
+              setTimeout(() => startListening(), 600);
+            }
+          };
+
+          activeSourceNode.start(0);
+        }
+      } catch (e) {
+        console.error("Playback decoding error:", e);
+        isSpeaking = false;
+        updateUIState();
+      }
+    }
+
+    // TTS Vocalization Routine
+    async function speakText(text) {
+      if (!text) return;
+      stopSpeech();
+
+      // Abort microphone capture while speaking to avoid self-feedback
+      if (isListening && recognition) {
+        try { recognition.abort(); } catch(e) {}
+        isListening = false;
+      }
+
+      if (voiceProvider === "system" || !apiKey) {
+        speakTextSystem(text);
+        return;
+      }
+
+      // Gemini high fidelity vocal synthesis (Gemini 3.1 tts-preview or 2.5)
+      isSpeaking = true;
+      updateUIState();
+
+      try {
+        const cleanText = text.replace(/[\*\_~`#]/g, "").trim();
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-tts-preview:generateContent?key=${apiKey}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: cleanText }] }],
+            generationConfig: {
+              responseModalities: ["AUDIO"],
+              speechConfig: {
+                voiceConfig: {
+                  prebuiltVoiceConfig: {
+                    voiceName: geminiVoice
+                  }
+                }
+              }
+            }
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error("Gemini TTS API returned status error");
+        }
+
+        const data = await response.json();
+        const base64Audio = data.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+
+        if (base64Audio) {
+          await playAudioBuffer(base64Audio);
+        } else {
+          throw new Error("No inline audio data found in response");
+        }
+      } catch (err) {
+        console.warn("Gemini Native Audio fails, falling back to System Speech:", err);
+        speakTextSystem(text);
+      }
+    }
+
     function stopSpeech() {
+      // 1. Stop system synthesizer
       if (typeof speechSynthesis !== "undefined") {
         speechSynthesis.cancel();
+      }
+      // 2. Stop HTML Audio element
+      if (activeAudio) {
+        try { activeAudio.pause(); } catch(e){}
+        activeAudio = null;
+      }
+      // 3. Stop raw PCM source node
+      if (activeSourceNode) {
+        try { activeSourceNode.stop(); } catch(e){}
+        activeSourceNode = null;
       }
       isSpeaking = false;
       updateUIState();
@@ -599,7 +808,7 @@
       }
     }
 
-    // Direct Client-Side Gemini Communication Engine (Supports Gemini 1.5 & 2.5 Flash)
+    // Direct Client-Side Gemini Communication Engine (Supports Gemini 3.5 Flash)
     async function sendToGemini(userInput) {
       const trimmed = userInput.trim();
       if (!trimmed) return;
@@ -625,8 +834,8 @@
       const sysInstruction = "ඔබ 'Hela AI' (හෙළ AI) නම් ඉතා කාරුණික, උපකාරී සහ මිත්‍රශීලී සිංහල කතා කරන සහායකයා වේ. ඔබගේ ප්‍රධාන කාර්යය වන්නේ පරිශීලකයා අසන ඕනෑම ප්‍රශ්නයකට ඉතා පැහැදිලි, සරල සහ කන්කලු සිංහල භාෂාවෙන් පිළිතුරු සැපයීමයි. \n\nවැදගත් නීති:\n1. පිළිතුරු සැපයීමේදී හැකිතාක් කෙටි, සරල සහ පැහැදිලි සිංහල වචන භාවිතා කරන්න (විශේෂයෙන්ම හඬ කියවීමට පහසු වන සේ).\n2. තාක්ෂණික හෝ ඉංග්‍රීසි වචන සිංහලෙන් ලියන්න (උදාහරණ: 'Phone' වෙනුවට 'දුරකථනය' හෝ 'ෆෝන් එක').\n3. පිළිතුරු දිගු ඡේද ලෙස නොව, කියවීමට පහසු කෙටි වාක්‍ය 2-4 කින් පමණක් ලබාදීමට උත්සාහ කරන්න.\n4. පිළිතුරු සැපයීමේදී අලංකාර සිංහල ආචාරශීලී වචන (ආයුබෝවන්, ස්තූතියි, කරුණාකර) සුදුසු පරිදි භාවිත කරන්න.";
 
       try {
-        // Query API directly on selected Gemini Flash model (e.g. gemini-1.5-flash or gemini-2.5-flash)
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`, {
+        // Query Gemini 3.5 Flash model directly
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -693,7 +902,7 @@
         waveformStatus.className = "text-indigo-600 animate-pulse flex items-center gap-1 font-extrabold";
         waveformStatus.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse"></span>THINKING';
         micStatusLabel.className = "text-xs font-extrabold mt-3 text-indigo-500 animate-pulse";
-        micStatusLabel.textContent = "පිළිතුර සකසමින් පවතී...";
+        micStatusLabel.textContent = "Hela AI පිළිතුර සකසමින් පවතී...";
         micIcon.className = "w-8 h-8 text-white";
         btnMic.className = "w-20 h-20 rounded-3xl flex flex-col items-center justify-center shadow-2xl transition-all transform hover:scale-105 active:scale-95 bg-indigo-400 text-white cursor-not-allowed";
         micPingListener.classList.add("hidden");
@@ -809,9 +1018,9 @@
       localStorage.setItem("hela_ai_api_key", apiKey);
     });
 
-    modelSelect.addEventListener("change", (e) => {
-      selectedModel = e.target.value;
-      localStorage.setItem("hela_ai_model", selectedModel);
+    geminiVoiceSelect.addEventListener("change", (e) => {
+      geminiVoice = e.target.value;
+      localStorage.setItem("hela_ai_gemini_voice", geminiVoice);
     });
 
     btnToggleKey.addEventListener("click", () => {
