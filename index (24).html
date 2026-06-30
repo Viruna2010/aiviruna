@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="si" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hela AI - Sinhala Talking Assistant</title>
+  
+  <!-- Tailwind CSS v3 CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter (sans) & Space Grotesk (display) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.2);
+      border-radius: 99px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(99, 102, 241, 0.4);
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    
+    /* Animation helper classes */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+  </style>
+</head>
+<body class="h-full bg-indigo-50 text-indigo-950 flex flex-col font-sans relative antialiased selection:bg-indigo-200 selection:text-indigo-900">
+
+  <!-- Soft gradient glowing dots in background -->
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-xl h-[400px] bg-gradient-to-b from-indigo-200/40 via-transparent to-transparent blur-3xl pointer-events-none z-0"></div>
+
+  <!-- Header Section -->
+  <header class="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b border-indigo-100 px-6 py-4 flex items-center justify-between shadow-sm shrink-0">
+    <div class="flex items-center gap-3">
+      <div class="relative">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-indigo-100">
+          <i data-lucide="sparkles" class="w-5 h-5 animate-pulse text-white"></i>
+        </div>
+        <!-- Status Indicator Dot -->
+        <span id="status-indicator" class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white bg-indigo-500 transition-colors duration-300"></span>
+      </div>
+      <div>
+        <h1 class="text-lg font-black tracking-tight text-indigo-950 flex items-center gap-1.5 font-display">
+          HELA AI <span class="text-[10px] text-indigo-600 font-extrabold px-2 py-0.5 rounded-full bg-indigo-50">සිංහල කටහඬ</span>
+        </h1>
+        <p class="text-[10px] font-bold text-indigo-400">ඔබේ හඬට සවන් දෙන කෘත්‍රිම බුද්ධි සහායකයා</p>
+      </div>
+    </div>
+
+    <!-- Right Header Controls -->
+    <div class="flex items-center gap-2">
+      <!-- Input Mode Toggle (Text / Mic) -->
+      <button
+        id="btn-toggle-input-mode"
+        class="p-2.5 rounded-2xl border border-indigo-100 bg-white text-indigo-400 hover:text-indigo-600 transition-all shadow-sm"
+        title="ක්‍රමය මාරු කරන්න"
+      >
+        <i data-lucide="message-square" class="w-4 h-4"></i>
+      </button>
+
+      <!-- Settings Panel Toggle -->
+      <button
+        id="btn-toggle-settings"
+        class="p-2.5 rounded-2xl border border-indigo-100 bg-white text-indigo-400 hover:text-indigo-600 transition-all shadow-sm"
+        title="සැකසුම් (Settings)"
+      >
+        <i data-lucide="settings" class="w-4 h-4"></i>
+      </button>
+
+      <!-- Conversation Clear / Reset -->
+      <button
+        id="btn-clear-chat"
+        class="p-2.5 rounded-2xl bg-white border border-indigo-100 text-indigo-400 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm"
+        title="සංවාදය මකන්න"
+      >
+        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Workspace Layout -->
+  <main class="flex-1 flex flex-col overflow-hidden max-w-2xl mx-auto w-full px-4 pt-4 pb-2 z-10 relative">
+    
+    <!-- AI Live Audio Waveform Card -->
+    <div class="bg-white border border-indigo-100 rounded-3xl p-5 mb-4 flex flex-col items-center justify-center relative shadow-lg shadow-indigo-100/30 overflow-hidden min-h-[160px] shrink-0">
+      
+      <!-- Card Sub-header details -->
+      <div class="absolute top-3.5 left-4 text-[10px] font-black text-indigo-400 flex items-center gap-1.5 uppercase tracking-wider">
+        <i data-lucide="headphones" class="w-3.5 h-3.5"></i>
+        <span>සජීවී හඬ දර්ශකය (LIVE WAVEFORM)</span>
+      </div>
+      
+      <div class="absolute top-3.5 right-4 text-[10px] font-bold flex items-center gap-1">
+        <span id="waveform-status" class="text-indigo-300 font-extrabold uppercase tracking-wide">සූදානම්</span>
+      </div>
+
+      <!-- Glowing pulse gradient ring in background behind Waveform -->
+      <div id="glow-pulse" class="absolute w-44 h-44 bg-indigo-100 rounded-full blur-2xl opacity-40 pointer-events-none transition-all duration-500"></div>
+
+      <!-- Waveform SVG Container -->
+      <div class="relative z-10 w-full flex justify-center items-center h-24">
+        <svg id="waveform-svg" class="w-full max-w-md h-16" viewBox="0 0 400 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path id="wave-path-1" d="M 0 50 Q 100 50, 200 50 T 400 50" stroke="url(#gradient1)" stroke-width="3.5" stroke-linecap="round" />
+          <path id="wave-path-2" d="M 0 50 Q 100 50, 200 50 T 400 50" stroke="url(#gradient2)" stroke-width="2" stroke-linecap="round" opacity="0.5" />
+          <defs>
+            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#4f46e5" />
+              <stop offset="50%" stop-color="#818cf8" />
+              <stop offset="100%" stop-color="#c084fc" />
+            </linearGradient>
+            <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#c084fc" />
+              <stop offset="50%" stop-color="#f472b6" />
+              <stop offset="100%" stop-color="#818cf8" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <!-- Error Alerts Notification Bar -->
+      <div id="listening-error-alert" class="hidden mt-1.5 text-xs text-red-600 font-extrabold flex items-center gap-1.5 bg-red-50 border border-red-100 px-4 py-2 rounded-full shadow-sm animate-bounce">
+        <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-red-500"></i>
+        <span id="error-alert-text">දෝෂයක් සිදුවිය</span>
+      </div>
+
+      <!-- Navigation/Action helper text -->
+      <p id="instruction-label" class="text-[11px] text-indigo-500/80 text-center mt-2 font-medium">
+        පහත <strong class="text-indigo-600 font-extrabold">මයික්‍රෆෝනය</strong> ඔබා සිංහලෙන් කතා කරන්න
+      </p>
+    </div>
+
+    <!-- Collapsible Settings Panel (Advanced configurations & Keys) -->
+    <div id="settings-panel" class="hidden bg-white border border-indigo-100 rounded-3xl p-5 mb-4 shadow-xl shadow-indigo-100/30 space-y-4 animate-fade-in shrink-0 z-30">
+      <div class="flex items-center justify-between border-b border-indigo-50 pb-3">
+        <h3 class="text-sm font-black text-indigo-950 flex items-center gap-2 font-display">
+          <i data-lucide="sliders" class="w-4 h-4 text-indigo-600"></i>
+          කටහඬ සහ කෘත්‍රිම බුද්ධි සැකසුම් (Settings)
+        </h3>
+        <button id="btn-close-settings" class="text-indigo-400 hover:text-indigo-600 p-1 rounded-lg">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Gemini API Key configuration block -->
+      <div class="bg-indigo-50/50 p-3.5 rounded-2xl border border-indigo-100">
+        <label class="block text-xs font-black text-indigo-950 mb-1.5 flex items-center justify-between">
+          <span class="flex items-center gap-1.5">
+            <i data-lucide="key" class="w-3.5 h-3.5 text-indigo-600"></i>
+            Gemini API Key එක ඇතුලත් කරන්න
+          </span>
+          <a
+            href="https://aistudio.google.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-[10px] text-indigo-600 hover:underline font-extrabold"
+          >
+            නොමිලේ ලබාගන්න (Get Free Key) ↗
+          </a>
+        </label>
+        <div class="relative">
+          <input
+            id="api-key-input"
+            type="password"
+            placeholder="AI Studio API Key (AIzaSy...)"
+            class="w-full bg-white border border-indigo-100 text-indigo-950 text-xs font-bold rounded-xl pl-3 pr-10 py-2.5 focus:ring-4 focus:ring-indigo-100 focus:outline-none transition-all placeholder:text-indigo-300 font-mono"
+          >
+          <button
+            type="button"
+            id="btn-toggle-key"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-indigo-400 hover:text-indigo-600 p-1 rounded-lg"
+          >
+            <i data-lucide="eye" class="w-4 h-4" id="eye-icon"></i>
+          </button>
+        </div>
+        <span class="text-[9px] text-indigo-500/80 mt-1.5 block font-medium leading-relaxed">
+          * මෙම කේතය ඔබගේ බ්‍රවුසරයෙහි (local storage) සුරක්ෂිතව තැන්පත් වන අතර කිසිදු බාහිර සේවාදායකයකට (backend server) යොමු නොවේ. Cloudflare, GitHub Pages වැනි ඕනෑම තැනක ක්‍රියා කරයි!
+        </span>
+      </div>
+
+      <!-- Advanced Model Selection dropdown -->
+      <div>
+        <label class="block text-xs font-bold text-indigo-900/80 mb-1.5 flex items-center gap-1.5">
+          <i data-lucide="cpu" class="w-3.5 h-3.5 text-indigo-500"></i>
+          කෘත්‍රිම බුද්ධි ආකෘතිය (Select Gemini Model)
+        </label>
+        <select id="model-select" class="w-full bg-indigo-50/50 border border-indigo-100 text-indigo-950 text-xs font-bold rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+          <option value="gemini-1.5-flash" selected>Gemini 1.5 Flash (වේගවත් / Low Latency) ⭐</option>
+          <option value="gemini-2.5-flash">Gemini 2.5 Flash (නවම සංස්කරණය / Ultra Fast)</option>
+          <option value="gemini-1.5-pro">Gemini 1.5 Pro (වැඩි දියුණු කල බුද්ධි මට්ටම / Smartest)</option>
+        </select>
+      </div>
+
+      <!-- Voice Selection dropdown list -->
+      <div>
+        <label class="block text-xs font-bold text-indigo-900/80 mb-1.5 flex items-center gap-1.5">
+          <i data-lucide="globe" class="w-3.5 h-3.5 text-indigo-500"></i>
+          කටහඬ තෝරන්න (Select System Text-to-Speech Voice)
+        </label>
+        <select id="voice-select" class="w-full bg-indigo-50/50 border border-indigo-100 text-indigo-950 text-xs font-bold rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+          <option value="">පෙරනිමි කටහඬ (System Default)</option>
+        </select>
+      </div>
+
+      <!-- Voice Pitch & Speed parameters range controls -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs font-bold text-indigo-900/80 mb-1 flex items-center justify-between">
+            <span>ශබ්ද වේගය (Speed)</span>
+            <span id="speed-val" class="font-mono text-[10px] text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded font-black">1.0x</span>
+          </label>
+          <input id="slider-speed" type="range" min="0.5" max="2.0" step="0.1" value="1.0" class="w-full accent-indigo-600 h-1 bg-indigo-100 rounded-lg appearance-none cursor-pointer">
+        </div>
+        <div>
+          <label class="text-xs font-bold text-indigo-900/80 mb-1 flex items-center justify-between">
+            <span>කටහඬ තාරතාව (Pitch)</span>
+            <span id="pitch-val" class="font-mono text-[10px] text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded font-black">1.0</span>
+          </label>
+          <input id="slider-pitch" type="range" min="0.5" max="1.5" step="0.1" value="1.0" class="w-full accent-indigo-600 h-1 bg-indigo-100 rounded-lg appearance-none cursor-pointer">
+        </div>
+      </div>
+
+      <button id="btn-test-voice" class="w-full py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-bold rounded-xl flex items-center justify-center gap-2 border border-indigo-100 transition-all shadow-sm">
+        <i data-lucide="volume-2" class="w-4 h-4"></i>
+        කටහඬ පරීක්ෂා කරන්න (Test Voice Output)
+      </button>
+    </div>
+
+    <!-- Conversation Logs / Chat Dialog Box -->
+    <div id="chat-box" class="flex-1 overflow-y-auto bg-white/70 border border-indigo-100/60 rounded-3xl p-5 space-y-4 shadow-xl shadow-indigo-100/20 min-h-[220px]">
+      <!-- Default Interactive Greetings -->
+      <div class="flex flex-col items-start animate-fade-in">
+        <div class="max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm bg-white border border-indigo-100 text-indigo-950 rounded-tl-none font-medium">
+          <p>ආයුබෝවන්! මම හෙළ AI (Hela AI). මට සිංහලෙන් ඕනෑම දෙයක් කියන්න හෝ අසන්න. මම ඔබට කටහඬින් සහ ලිඛිතව පිළිතුරු සැපයීමට සූදානම්! 🌸</p>
+        </div>
+        <span class="text-[9px] text-indigo-400 font-extrabold mt-1 px-1">Welcome</span>
+      </div>
+    </div>
+
+    <!-- Suggested Preset chips container (Horizontal Scroll) -->
+    <div class="flex items-center gap-2 overflow-x-auto py-3 no-scrollbar shrink-0 w-full">
+      <button onclick="sendPreset('ලස්සන සිංහල කවියක් කියන්න')" class="text-xs bg-white hover:bg-indigo-50 border-2 border-indigo-100 text-indigo-800 px-4 py-2.5 rounded-2xl font-extrabold transition-all shrink-0 hover:border-indigo-400 shadow-sm">
+        කවියක් කියන්න 📝
+      </button>
+      <button onclick="sendPreset('කෙටි සිංහල ජන කතාවක් කියන්න')" class="text-xs bg-white hover:bg-indigo-50 border-2 border-indigo-100 text-indigo-800 px-4 py-2.5 rounded-2xl font-extrabold transition-all shrink-0 hover:border-indigo-400 shadow-sm">
+        ජන කතාවක් 🌾
+      </button>
+      <button onclick="sendPreset('ශ්‍රී ලංකාවේ ප්‍රසිද්ධ සංචාරක ස්ථාන මොනවාද?')" class="text-xs bg-white hover:bg-indigo-50 border-2 border-indigo-100 text-indigo-800 px-4 py-2.5 rounded-2xl font-extrabold transition-all shrink-0 hover:border-indigo-400 shadow-sm">
+        සංචාරක ස්ථාන 🗺️
+      </button>
+      <button onclick="sendPreset('කිරි බත් සාදන ආකාරය කෙටියෙන් කියන්න')" class="text-xs bg-white hover:bg-indigo-50 border-2 border-indigo-100 text-indigo-800 px-4 py-2.5 rounded-2xl font-extrabold transition-all shrink-0 hover:border-indigo-400 shadow-sm">
+        කෑම වට්ටෝරුවක් 🍲
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Interactive Footer dock controls -->
+  <footer class="sticky bottom-0 bg-white/95 backdrop-blur-md border-t border-indigo-100 p-4 max-w-2xl mx-auto w-full shadow-lg rounded-t-3xl shrink-0 z-20">
+    
+    <!-- Hands-Free auto continuous speech controller -->
+    <div class="flex items-center justify-between mb-3 bg-indigo-50/80 border border-indigo-100 px-4 py-2.5 rounded-2xl">
+      <div class="flex flex-col">
+        <span class="text-xs font-black text-indigo-950">අඛණ්ඩ හඬ සංවාදය (Continuous Mode)</span>
+        <span class="text-[10px] text-indigo-500 font-semibold">AI කතා කර අවසන් වූ පසු මයික්‍රෆෝනය ඉබේම ක්‍රියාත්මක වේ.</span>
+      </div>
+      <button
+        id="btn-toggle-continuous-mode"
+        class="text-xs px-4 py-2 rounded-xl font-black transition-all shadow-sm bg-indigo-100/80 text-indigo-600 hover:bg-indigo-100"
+      >
+        අක්‍රීයයි (OFF)
+      </button>
+    </div>
+
+    <!-- Text-to-Text Input Section (Toggleable) -->
+    <div id="text-mode-input" class="hidden flex items-center gap-2">
+      <input
+        id="text-input-field"
+        type="text"
+        placeholder="ඔබගේ ප්‍රශ්නය මෙතැන ලියන්න..."
+        class="flex-1 bg-indigo-50 border border-indigo-100 focus:ring-4 focus:ring-indigo-100 focus:outline-none rounded-2xl py-4 px-5 text-sm text-indigo-950 font-bold transition-all placeholder:text-indigo-300"
+      >
+      <button
+        id="btn-send-text"
+        class="p-4 bg-indigo-600 text-white rounded-2xl font-black transition-all shadow-lg shadow-indigo-100 hover:bg-indigo-700"
+      >
+        <i data-lucide="send" class="w-5 h-5"></i>
+      </button>
+    </div>
+
+    <!-- Realtime Voice/Microphone capture block -->
+    <div id="voice-mode-input" class="flex flex-col items-center py-2">
+      <div class="relative flex items-center justify-center">
+        <!-- Glow effects surrounding action -->
+        <div id="mic-ping-listener" class="hidden absolute inset-0 bg-red-500/20 rounded-full animate-ping scale-150"></div>
+        <div id="mic-ping-speaker" class="hidden absolute inset-0 bg-indigo-500/20 rounded-full animate-ping scale-125"></div>
+
+        <button
+          id="btn-mic"
+          class="w-20 h-20 rounded-3xl flex flex-col items-center justify-center shadow-2xl transition-all transform hover:scale-105 active:scale-95 bg-indigo-600 text-white shadow-xl shadow-indigo-200 hover:bg-indigo-700"
+        >
+          <i data-lucide="mic" id="mic-icon" class="w-8 h-8"></i>
+        </button>
+      </div>
+
+      <span id="mic-status-label" class="text-xs font-extrabold mt-3 text-indigo-900">
+        සිංහලෙන් කතා කිරීමට ඔබන්න (Tap to Speak)
+      </span>
+    </div>
+  </footer>
+
+  <!-- Core Pure JS Runtime and Cloudflare Compatibility Layer -->
+  <script>
+    // System States
+    let isTextMode = false;
+    let isContinuousMode = false;
+    let isListening = false;
+    let isSpeaking = false;
+    let isThinking = false;
+    let recognition = null;
+    let currentSpeechUtterance = null;
+    let selectedVoice = null;
+    let voicesList = [];
+    let messages = [];
+
+    // Local Storage values with automatic fallback for Cloudflare Pages/Workers placeholders
+    // Cloudflare users can define their keys globally as `window.CLOUDFLARE_GEMINI_API_KEY` or `window.ENV_GEMINI_API_KEY`
+    let apiKey = window.CLOUDFLARE_GEMINI_API_KEY || window.ENV_GEMINI_API_KEY || localStorage.getItem("hela_ai_api_key") || "";
+    let voiceSpeed = parseFloat(localStorage.getItem("hela_ai_speed") || "1.0");
+    let voicePitch = parseFloat(localStorage.getItem("hela_ai_pitch") || "1.0");
+    let savedVoiceName = localStorage.getItem("hela_ai_voice_name") || "";
+    let selectedModel = localStorage.getItem("hela_ai_model") || "gemini-1.5-flash";
+
+    // DOM Nodes Binding
+    const btnToggleInputMode = document.getElementById("btn-toggle-input-mode");
+    const btnToggleSettings = document.getElementById("btn-toggle-settings");
+    const btnClearChat = document.getElementById("btn-clear-chat");
+    const btnCloseSettings = document.getElementById("btn-close-settings");
+    const settingsPanel = document.getElementById("settings-panel");
+    const apiKeyInput = document.getElementById("api-key-input");
+    const btnToggleKey = document.getElementById("btn-toggle-key");
+    const modelSelect = document.getElementById("model-select");
+    const voiceSelect = document.getElementById("voice-select");
+    const sliderSpeed = document.getElementById("slider-speed");
+    const sliderPitch = document.getElementById("slider-pitch");
+    const speedVal = document.getElementById("speed-val");
+    const pitchVal = document.getElementById("pitch-val");
+    const btnTestVoice = document.getElementById("btn-test-voice");
+    const chatBox = document.getElementById("chat-box");
+    const btnToggleContinuousMode = document.getElementById("btn-toggle-continuous-mode");
+    const textModeInput = document.getElementById("text-mode-input");
+    const voiceModeInput = document.getElementById("voice-mode-input");
+    const textInputField = document.getElementById("text-input-field");
+    const btnSendText = document.getElementById("btn-send-text");
+    const btnMic = document.getElementById("btn-mic");
+    const micIcon = document.getElementById("mic-icon");
+    const micStatusLabel = document.getElementById("mic-status-label");
+    const micPingListener = document.getElementById("mic-ping-listener");
+    const micPingSpeaker = document.getElementById("mic-ping-speaker");
+    const statusIndicator = document.getElementById("status-indicator");
+    const waveformStatus = document.getElementById("waveform-status");
+    const glowPulse = document.getElementById("glow-pulse");
+    const listeningErrorAlert = document.getElementById("listening-error-alert");
+    const errorAlertText = document.getElementById("error-alert-text");
+    const instructionLabel = document.getElementById("instruction-label");
+    const eyeIcon = document.getElementById("eye-icon");
+
+    // Hydrate parameters on start
+    if (apiKey) apiKeyInput.value = apiKey;
+    sliderSpeed.value = voiceSpeed;
+    sliderPitch.value = voicePitch;
+    modelSelect.value = selectedModel;
+    speedVal.textContent = voiceSpeed.toFixed(1) + "x";
+    pitchVal.textContent = voicePitch.toFixed(1);
+
+    // Advanced dynamic mathematical SVG wave rendering
+    let animId = null;
+    const wavePath1 = document.getElementById("wave-path-1");
+    const wavePath2 = document.getElementById("wave-path-2");
+
+    function renderDynamicWave(timestamp) {
+      let amp = 4; // Flat base sine on idle
+      let freq = 0.008;
+
+      if (isListening) {
+        amp = 26; // High frequency capture simulation
+        freq = 0.022;
+      } else if (isThinking) {
+        amp = 12; // Pulsing thinking wave
+        freq = 0.035;
+      } else if (isSpeaking) {
+        amp = 22; // Resonant audio frequency
+        freq = 0.016;
+      }
+
+      const offset1 = timestamp * freq;
+      const offset2 = timestamp * (freq * 0.75) + 120;
+
+      let d1 = "M 0 50";
+      let d2 = "M 0 50";
+
+      for (let x = 0; x <= 400; x += 8) {
+        const y1 = 50 + Math.sin(x * 0.025 + offset1) * amp;
+        const y2 = 50 + Math.sin(x * 0.018 + offset2) * amp * 0.75;
+        d1 += ` L ${x} ${y1}`;
+        d2 += ` L ${x} ${y2}`;
+      }
+
+      wavePath1.setAttribute("d", d1);
+      wavePath2.setAttribute("d", d2);
+
+      animId = requestAnimationFrame(renderDynamicWave);
+    }
+    animId = requestAnimationFrame(renderDynamicWave);
+
+    // Populate Available TTS Voices
+    function loadSystemVoices() {
+      if (typeof speechSynthesis === "undefined") return;
+      voicesList = speechSynthesis.getVoices();
+      
+      voiceSelect.innerHTML = '<option value="">පෙරනිමි කටහඬ (System Default)</option>';
+      
+      voicesList.forEach((voice) => {
+        const isSinhala = voice.lang.includes("si") || voice.lang.includes("LK");
+        const option = document.createElement("option");
+        option.value = voice.name;
+        option.textContent = `${voice.name} (${voice.lang})${isSinhala ? ' - Sinhala ⭐' : ''}`;
+        
+        if (voice.name === savedVoiceName) {
+          option.selected = true;
+          selectedVoice = voice;
+        }
+        voiceSelect.appendChild(option);
+      });
+    }
+
+    if (typeof speechSynthesis !== "undefined") {
+      speechSynthesis.onvoiceschanged = loadSystemVoices;
+      loadSystemVoices();
+    }
+
+    // Web Speech API STT Integration
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.lang = "si-LK"; // Standard Sri Lankan Sinhala
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => {
+        isListening = true;
+        updateUIState();
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        if (transcript.trim()) {
+          appendMessage("user", transcript);
+          sendToGemini(transcript);
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.error("Speech Recognition Error:", event.error);
+        isListening = false;
+        updateUIState();
+        if (event.error === "no-speech") {
+          displayError("හඬක් හඳුනා ගැනීමට නොහැකි විය. නැවත උත්සාහ කරන්න.");
+        } else if (event.error === "not-allowed") {
+          displayError("මයික්‍රෆෝන් අවසරය ලබා දී නොමැත. කරුණාකර අවසර දෙන්න.");
+        } else {
+          displayError("මයික්‍රෆෝනයේ ගැටලුවකි. කරුණාකර නැවත උත්සාහ කරන්න.");
+        }
+      };
+
+      recognition.onend = () => {
+        isListening = false;
+        updateUIState();
+      };
+    }
+
+    // TTS Vocalization Routine
+    function speakText(text) {
+      if (typeof speechSynthesis === "undefined") return;
+      
+      // Stop current speaker
+      speechSynthesis.cancel();
+
+      // Stripping brackets/asterisks to prevent robot voice reads
+      const cleanText = text
+        .replace(/[\*\_~`#]/g, "")
+        .replace(/\(.*?\)/g, "")
+        .trim();
+
+      currentSpeechUtterance = new SpeechSynthesisUtterance(cleanText);
+      currentSpeechUtterance.lang = "si-LK";
+      currentSpeechUtterance.rate = voiceSpeed;
+      currentSpeechUtterance.pitch = voicePitch;
+
+      if (selectedVoice) {
+        currentSpeechUtterance.voice = selectedVoice;
+      } else {
+        const fallbackSinhala = voicesList.find(v => v.lang.includes("si") || v.lang.includes("LK"));
+        if (fallbackSinhala) currentSpeechUtterance.voice = fallbackSinhala;
+      }
+
+      currentSpeechUtterance.onstart = () => {
+        isSpeaking = true;
+        updateUIState();
+      };
+
+      currentSpeechUtterance.onend = () => {
+        isSpeaking = false;
+        updateUIState();
+        
+        // Continuous flow automatic re-capture
+        if (isContinuousMode && !isTextMode && recognition) {
+          setTimeout(() => {
+            if (!isListening && !isSpeaking && !isThinking) {
+              startListening();
+            }
+          }, 600);
+        }
+      };
+
+      currentSpeechUtterance.onerror = (e) => {
+        console.error("Vocal Synthesis Error:", e);
+        isSpeaking = false;
+        updateUIState();
+      };
+
+      speechSynthesis.speak(currentSpeechUtterance);
+    }
+
+    function stopSpeech() {
+      if (typeof speechSynthesis !== "undefined") {
+        speechSynthesis.cancel();
+      }
+      isSpeaking = false;
+      updateUIState();
+    }
+
+    function startListening() {
+      if (!recognition) {
+        displayError("ඔබගේ බ්‍රවුසරය හඬ හඳුනා ගැනීමේ පහසුකමට (Speech Recognition API) සහය නොදක්වයි.");
+        return;
+      }
+      stopSpeech();
+      hideError();
+      try {
+        recognition.start();
+      } catch (e) {
+        console.error("Failed to start listening:", e);
+      }
+    }
+
+    function stopListening() {
+      if (recognition) {
+        recognition.stop();
+      }
+    }
+
+    // Direct Client-Side Gemini Communication Engine (Supports Gemini 1.5 & 2.5 Flash)
+    async function sendToGemini(userInput) {
+      const trimmed = userInput.trim();
+      if (!trimmed) return;
+
+      isThinking = true;
+      updateUIState();
+
+      if (!apiKey) {
+        isThinking = false;
+        updateUIState();
+        appendMessage("model", "කරුණාකර ඉහළ දකුණු කෙළවරේ ඇති සැකසුම් (Settings) බොත්තම ඔබා ඔබගේ 'Gemini API Key' එක ඇතුලත් කරන්න. ඔබට ගූගල් වෙතින් නොමිලේම API Key එකක් ලබාගත හැක.");
+        settingsPanel.classList.remove("hidden");
+        return;
+      }
+
+      // Context history structure
+      const contents = messages.map(m => ({
+        role: m.role,
+        parts: [{ text: m.text }]
+      }));
+
+      // High quality Sinhala voice optimized system instruction
+      const sysInstruction = "ඔබ 'Hela AI' (හෙළ AI) නම් ඉතා කාරුණික, උපකාරී සහ මිත්‍රශීලී සිංහල කතා කරන සහායකයා වේ. ඔබගේ ප්‍රධාන කාර්යය වන්නේ පරිශීලකයා අසන ඕනෑම ප්‍රශ්නයකට ඉතා පැහැදිලි, සරල සහ කන්කලු සිංහල භාෂාවෙන් පිළිතුරු සැපයීමයි. \n\nවැදගත් නීති:\n1. පිළිතුරු සැපයීමේදී හැකිතාක් කෙටි, සරල සහ පැහැදිලි සිංහල වචන භාවිතා කරන්න (විශේෂයෙන්ම හඬ කියවීමට පහසු වන සේ).\n2. තාක්ෂණික හෝ ඉංග්‍රීසි වචන සිංහලෙන් ලියන්න (උදාහරණ: 'Phone' වෙනුවට 'දුරකථනය' හෝ 'ෆෝන් එක').\n3. පිළිතුරු දිගු ඡේද ලෙස නොව, කියවීමට පහසු කෙටි වාක්‍ය 2-4 කින් පමණක් ලබාදීමට උත්සාහ කරන්න.\n4. පිළිතුරු සැපයීමේදී අලංකාර සිංහල ආචාරශීලී වචන (ආයුබෝවන්, ස්තූතියි, කරුණාකර) සුදුසු පරිදි භාවිත කරන්න.";
+
+      try {
+        // Query API directly on selected Gemini Flash model (e.g. gemini-1.5-flash or gemini-2.5-flash)
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            contents,
+            systemInstruction: {
+              parts: [{ text: sysInstruction }]
+            },
+            generationConfig: {
+              temperature: 0.75,
+              maxOutputTokens: 350
+            }
+          })
+        });
+
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.error?.message || "සේවාදායකය සමඟ සම්බන්ධ වීමේදී දෝෂයක් සිදු විය.");
+        }
+
+        const data = await response.json();
+        const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "මට සමාවෙන්න. මට පිළිතුරක් සකසා ගැනීමට නොහැකි වුණා.";
+
+        isThinking = false;
+        updateUIState();
+        appendMessage("model", replyText);
+        speakText(replyText);
+
+      } catch (err) {
+        console.error("Gemini API Client Error:", err);
+        isThinking = false;
+        updateUIState();
+        appendMessage("model", `මට සමාවෙන්න. ගූගල් සේවාව සමඟ සම්බන්ධ වීමේදී දෝෂයක් සිදු විය: ${err.message || "කරුණාකර ඔබ ඇතුලත් කල API Key එක නිවැරදිදැයි පරීක්ෂා කරන්න."}`);
+      }
+    }
+
+    // Responsive State Rendering UI engine
+    function updateUIState() {
+      if (isListening) {
+        statusIndicator.className = "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white bg-red-500 animate-ping";
+        waveformStatus.className = "text-red-500 animate-pulse flex items-center gap-1 font-extrabold uppercase";
+        waveformStatus.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>LISTENING';
+        micStatusLabel.className = "text-xs font-extrabold mt-3 text-red-500 animate-pulse";
+        micStatusLabel.textContent = "ඔබට සවන් දෙයි... (Listening)";
+        micIcon.className = "w-8 h-8 animate-pulse text-white";
+        btnMic.className = "w-20 h-20 rounded-3xl flex flex-col items-center justify-center shadow-2xl transition-all transform hover:scale-105 active:scale-95 bg-gradient-to-tr from-red-600 to-rose-500 text-white";
+        micPingListener.classList.remove("hidden");
+        micPingSpeaker.classList.add("hidden");
+        glowPulse.className = "absolute w-44 h-44 bg-red-100 rounded-full blur-2xl opacity-40 pointer-events-none transition-all duration-500 scale-125";
+      } else if (isSpeaking) {
+        statusIndicator.className = "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white bg-emerald-500 animate-pulse";
+        waveformStatus.className = "text-emerald-500 animate-pulse flex items-center gap-1 font-extrabold uppercase";
+        waveformStatus.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>SPEAKING';
+        micStatusLabel.className = "text-xs font-extrabold mt-3 text-emerald-600 cursor-pointer";
+        micStatusLabel.textContent = "පිළිතුර නවත්වන්න (Tap to Stop Voice)";
+        micIcon.className = "w-8 h-8 text-white";
+        btnMic.className = "w-20 h-20 rounded-3xl flex flex-col items-center justify-center shadow-2xl transition-all transform hover:scale-105 active:scale-95 bg-gradient-to-tr from-indigo-600 to-purple-500 text-white";
+        micPingListener.classList.add("hidden");
+        micPingSpeaker.classList.remove("hidden");
+        glowPulse.className = "absolute w-44 h-44 bg-emerald-100 rounded-full blur-2xl opacity-40 pointer-events-none transition-all duration-500 scale-110";
+      } else if (isThinking) {
+        statusIndicator.className = "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white bg-indigo-500 animate-pulse";
+        waveformStatus.className = "text-indigo-600 animate-pulse flex items-center gap-1 font-extrabold";
+        waveformStatus.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse"></span>THINKING';
+        micStatusLabel.className = "text-xs font-extrabold mt-3 text-indigo-500 animate-pulse";
+        micStatusLabel.textContent = "පිළිතුර සකසමින් පවතී...";
+        micIcon.className = "w-8 h-8 text-white";
+        btnMic.className = "w-20 h-20 rounded-3xl flex flex-col items-center justify-center shadow-2xl transition-all transform hover:scale-105 active:scale-95 bg-indigo-400 text-white cursor-not-allowed";
+        micPingListener.classList.add("hidden");
+        micPingSpeaker.classList.add("hidden");
+        glowPulse.className = "absolute w-44 h-44 bg-indigo-200 rounded-full blur-2xl opacity-40 pointer-events-none transition-all duration-500";
+      } else {
+        statusIndicator.className = "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white bg-indigo-500";
+        waveformStatus.className = "text-indigo-300 font-extrabold";
+        waveformStatus.textContent = "සූදානම්";
+        micStatusLabel.className = "text-xs font-extrabold mt-3 text-indigo-900";
+        micStatusLabel.textContent = "සිංහලෙන් කතා කිරීමට ඔබන්න (Tap to Speak)";
+        micIcon.className = "w-8 h-8 text-white";
+        btnMic.className = "w-20 h-20 rounded-3xl flex flex-col items-center justify-center shadow-2xl transition-all transform hover:scale-105 active:scale-95 bg-indigo-600 text-white hover:bg-indigo-700";
+        micPingListener.classList.add("hidden");
+        micPingSpeaker.classList.add("hidden");
+        glowPulse.className = "absolute w-44 h-44 bg-indigo-100 rounded-full blur-2xl opacity-40 pointer-events-none transition-all duration-500";
+      }
+    }
+
+    // Output Chat Messages dynamically with voice controls
+    function appendMessage(role, text) {
+      const msgId = Date.now();
+      messages.push({ id: msgId, role, text });
+
+      const container = document.createElement("div");
+      container.className = `flex flex-col ${role === 'user' ? 'items-end' : 'items-start'} animate-fade-in`;
+
+      const card = document.createElement("div");
+      card.className = `max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
+        role === 'user'
+          ? "bg-indigo-600 text-white font-semibold rounded-tr-none shadow-md shadow-indigo-100"
+          : "bg-white border border-indigo-100 text-indigo-950 rounded-tl-none font-medium"
+      }`;
+
+      const p = document.createElement("p");
+      p.textContent = text;
+      card.appendChild(p);
+
+      // Speak reply controls for model responses
+      if (role === "model") {
+        const controls = document.createElement("div");
+        controls.className = "flex items-center justify-end gap-1.5 mt-2 border-t border-indigo-100/60 pt-2";
+        
+        const btnReplay = document.createElement("button");
+        btnReplay.className = "text-xs text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1.5 bg-indigo-50 px-2.5 py-1 rounded-xl border border-indigo-100 font-bold";
+        btnReplay.innerHTML = '<i data-lucide="volume-2" class="w-3.5 h-3.5"></i> නැවත සවන් දෙන්න';
+        btnReplay.onclick = () => speakText(text);
+
+        controls.appendChild(btnReplay);
+        card.appendChild(controls);
+      }
+
+      container.appendChild(card);
+
+      const timestamp = document.createElement("span");
+      timestamp.className = "text-[9px] text-indigo-400 font-extrabold mt-1 px-1";
+      const now = new Date();
+      timestamp.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      container.appendChild(timestamp);
+
+      chatBox.appendChild(container);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      // Render updated Lucide vectors inside the message cards
+      lucide.createIcons();
+    }
+
+    // Suggested presets
+    function sendPreset(text) {
+      appendMessage("user", text);
+      sendToGemini(text);
+    }
+
+    function displayError(msg) {
+      errorAlertText.textContent = msg;
+      listeningErrorAlert.classList.remove("hidden");
+      instructionLabel.classList.add("hidden");
+    }
+
+    function hideError() {
+      listeningErrorAlert.classList.add("hidden");
+      instructionLabel.classList.remove("hidden");
+    }
+
+    // Toggle Mode Settings Binding triggers
+    btnToggleInputMode.addEventListener("click", () => {
+      isTextMode = !isTextMode;
+      if (isTextMode) {
+        btnToggleInputMode.classList.add("bg-indigo-500/10", "text-indigo-600");
+        btnToggleInputMode.title = "හඬ ක්‍රමයට මාරුවන්න";
+        textModeInput.classList.remove("hidden");
+        voiceModeInput.classList.add("hidden");
+        textInputField.focus();
+      } else {
+        btnToggleInputMode.classList.remove("bg-indigo-500/10", "text-indigo-600");
+        btnToggleInputMode.title = "ලිඛිත ක්‍රමයට මාරුවන්න";
+        textModeInput.classList.add("hidden");
+        voiceModeInput.classList.remove("hidden");
+      }
+    });
+
+    btnToggleSettings.addEventListener("click", () => {
+      settingsPanel.classList.toggle("hidden");
+    });
+
+    btnCloseSettings.addEventListener("click", () => {
+      settingsPanel.classList.add("hidden");
+    });
+
+    // Save configuration states
+    apiKeyInput.addEventListener("input", (e) => {
+      apiKey = e.target.value.trim();
+      localStorage.setItem("hela_ai_api_key", apiKey);
+    });
+
+    modelSelect.addEventListener("change", (e) => {
+      selectedModel = e.target.value;
+      localStorage.setItem("hela_ai_model", selectedModel);
+    });
+
+    btnToggleKey.addEventListener("click", () => {
+      if (apiKeyInput.type === "password") {
+        apiKeyInput.type = "text";
+        eyeIcon.setAttribute("data-lucide", "eye-off");
+      } else {
+        apiKeyInput.type = "password";
+        eyeIcon.setAttribute("data-lucide", "eye");
+      }
+      lucide.createIcons();
+    });
+
+    voiceSelect.addEventListener("change", (e) => {
+      const selectedName = e.target.value;
+      savedVoiceName = selectedName;
+      localStorage.setItem("hela_ai_voice_name", selectedName);
+      selectedVoice = voicesList.find(v => v.name === selectedName) || null;
+    });
+
+    sliderSpeed.addEventListener("input", (e) => {
+      voiceSpeed = parseFloat(e.target.value);
+      localStorage.setItem("hela_ai_speed", voiceSpeed.toString());
+      speedVal.textContent = voiceSpeed.toFixed(1) + "x";
+    });
+
+    sliderPitch.addEventListener("input", (e) => {
+      voicePitch = parseFloat(e.target.value);
+      localStorage.setItem("hela_ai_pitch", voicePitch.toString());
+      pitchVal.textContent = voicePitch.toFixed(1);
+    });
+
+    btnTestVoice.addEventListener("click", () => {
+      speakText("ආයුබෝවන්. ඔබගේ සිංහල කටහඬ සහායකයා දැන් සක්‍රීයයි.");
+    });
+
+    btnToggleContinuousMode.addEventListener("click", () => {
+      isContinuousMode = !isContinuousMode;
+      if (isContinuousMode) {
+        btnToggleContinuousMode.className = "text-xs px-4 py-2 rounded-xl font-black transition-all shadow-sm bg-indigo-600 text-white";
+        btnToggleContinuousMode.textContent = "සක්‍රීයයි (ON)";
+      } else {
+        btnToggleContinuousMode.className = "text-xs px-4 py-2 rounded-xl font-black transition-all shadow-sm bg-indigo-100/80 text-indigo-600 hover:bg-indigo-100";
+        btnToggleContinuousMode.textContent = "අක්‍රීයයි (OFF)";
+      }
+    });
+
+    // Clear & Re-initialize conversation log
+    btnClearChat.addEventListener("click", () => {
+      chatBox.innerHTML = `
+        <div class="flex flex-col items-start animate-fade-in">
+          <div class="max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm bg-white border border-indigo-100 text-indigo-950 rounded-tl-none font-medium">
+            <p>ආයුබෝවන්! සංවාදය නැවත ආරම්භ කරන ලදී. මට සිංහලෙන් ඕනෑම ප්‍රශ්නයක් අසන්න. 🌸</p>
+          </div>
+          <span class="text-[9px] text-indigo-400 font-extrabold mt-1 px-1">Restarted</span>
+        </div>
+      `;
+      messages = [];
+      stopSpeech();
+    });
+
+    // Keyboard bindings for manual text entry
+    textInputField.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        const val = textInputField.value.trim();
+        if (val) {
+          textInputField.value = "";
+          appendMessage("user", val);
+          sendToGemini(val);
+        }
+      }
+    });
+
+    btnSendText.addEventListener("click", () => {
+      const val = textInputField.value.trim();
+      if (val) {
+        textInputField.value = "";
+        appendMessage("user", val);
+        sendToGemini(val);
+      }
+    });
+
+    // Main Microphone Trigger
+    btnMic.addEventListener("click", () => {
+      if (isSpeaking) {
+        stopSpeech();
+        return;
+      }
+      if (isListening) {
+        stopListening();
+      } else {
+        startListening();
+      }
+    });
+
+    // Initialize all dynamic icons on window load
+    window.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      updateUIState();
+    });
+  </script>
+</body>
+</html>
