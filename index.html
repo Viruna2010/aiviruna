@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="si" class="h-full">
+<html lang="si" class="h-full bg-[#0D0D0D]">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VIRU AI - The Ultimate Sinhala Assistant</title>
+  <title>VIRU AI - Sinhala Editorial Voice Assistant</title>
   
-  <!-- Tailwind CSS v3 CDN -->
+  <!-- Tailwind CSS v4 CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Google Fonts: Inter (sans) & Space Grotesk (display) -->
+  <!-- Google Fonts: Inter (sans), Playfair Display (serif), JetBrains Mono (mono) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -22,7 +22,8 @@
         extend: {
           fontFamily: {
             sans: ['Inter', 'sans-serif'],
-            display: ['Space Grotesk', 'sans-serif'],
+            serif: ['Playfair Display', 'Georgia', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
           }
         }
       }
@@ -30,20 +31,20 @@
   </script>
 
   <style>
-    /* Custom scrollbar styling */
+    /* Editorial Layout Scrollbar */
     ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 4px;
+      height: 4px;
     }
     ::-webkit-scrollbar-track {
-      background: transparent;
+      background: #0D0D0D;
     }
     ::-webkit-scrollbar-thumb {
-      background: rgba(99, 102, 241, 0.2);
-      border-radius: 99px;
+      background: #333333;
+      border-radius: 2px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: rgba(99, 102, 241, 0.4);
+      background: #E53935;
     }
     .no-scrollbar::-webkit-scrollbar {
       display: none;
@@ -53,456 +54,473 @@
       scrollbar-width: none;
     }
     
-    /* Animation helper classes */
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
     .animate-fade-in {
-      animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
   </style>
 </head>
-<body class="h-full bg-indigo-50 text-indigo-950 flex flex-col font-sans relative antialiased selection:bg-indigo-200 selection:text-indigo-900">
+<body class="h-full bg-[#0D0D0D] text-[#F2F2F2] flex flex-col font-sans relative antialiased selection:bg-[#E53935] selection:text-white">
 
-  <!-- Soft gradient glowing dots in background -->
-  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-xl h-[400px] bg-gradient-to-b from-indigo-200/40 via-transparent to-transparent blur-3xl pointer-events-none z-0"></div>
-
-  <!-- Header Section -->
-  <header class="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b border-indigo-100 px-6 py-4 flex items-center justify-between shadow-sm shrink-0">
-    <div class="flex items-center gap-3">
-      <div class="relative">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-indigo-100">
-          <i data-lucide="sparkles" class="w-5 h-5 animate-pulse text-white"></i>
-        </div>
-        <!-- Status Indicator Dot -->
-        <span id="status-indicator" class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white bg-indigo-500 transition-colors duration-300"></span>
-      </div>
-      <div>
-        <h1 class="text-lg font-black tracking-tight text-indigo-950 flex items-center gap-1.5 font-display">
-          VIRU AI <span class="text-[10px] text-indigo-600 font-extrabold px-2 py-0.5 rounded-full bg-indigo-50">සිංහල කටහඬ</span>
-        </h1>
-        <p class="text-[10px] font-bold text-indigo-400 font-sans">Created by Viruna Randinu 😎</p>
-      </div>
-    </div>
-
-    <!-- Right Header Controls -->
-    <div class="flex items-center gap-2">
-      <!-- Input Mode Toggle (Text / Mic) -->
-      <button
-        id="btn-toggle-input-mode"
-        class="p-2.5 rounded-2xl border border-indigo-100 bg-white text-indigo-400 hover:text-indigo-600 transition-all shadow-sm"
-        title="ක්‍රමය මාරු කරන්න"
-      >
-        <i data-lucide="message-square" class="w-4 h-4"></i>
-      </button>
-
-      <!-- Settings Panel Toggle -->
-      <button
-        id="btn-toggle-settings"
-        class="p-2.5 rounded-2xl border border-indigo-100 bg-white text-indigo-400 hover:text-indigo-600 transition-all shadow-sm"
-        title="සැකසුම් (Settings)"
-      >
-        <i data-lucide="settings" class="w-4 h-4"></i>
-      </button>
-
-      <!-- Conversation Clear / Reset -->
-      <button
-        id="btn-clear-chat"
-        class="p-2.5 rounded-2xl bg-white border border-indigo-100 text-indigo-400 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm"
-        title="සංවාදය මකන්න"
-      >
-        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-      </button>
-    </div>
-  </header>
-
-  <!-- Main Workspace Layout -->
-  <main class="flex-1 flex flex-col overflow-hidden max-w-2xl mx-auto w-full px-4 pt-4 pb-2 z-10 relative">
+  <!-- Main Grid Wrapper to maintain premium Editorial asymmetry -->
+  <div class="flex-1 flex flex-col md:flex-row h-full overflow-hidden max-w-[1400px] mx-auto w-full border-x border-white/5 relative z-10">
     
-    <!-- AI Live Audio Waveform Card -->
-    <div class="bg-white border border-indigo-100 rounded-3xl p-5 mb-4 flex flex-col items-center justify-center relative shadow-lg shadow-indigo-100/30 overflow-hidden min-h-[160px] shrink-0">
+    <!-- LEFT PANEL: Primary Chat and Waveform Interface -->
+    <div class="flex-1 flex flex-col p-6 md:p-12 overflow-hidden border-b md:border-b-0 md:border-r border-white/5 relative">
       
-      <!-- Card Sub-header details -->
-      <div class="absolute top-3.5 left-4 text-[10px] font-black text-indigo-400 flex items-center gap-1.5 uppercase tracking-wider">
-        <i data-lucide="headphones" class="w-3.5 h-3.5"></i>
-        <span>සජීවී හඬ දර්ශකය (LIVE WAVEFORM)</span>
-      </div>
-      
-      <div class="absolute top-3.5 right-4 text-[10px] font-bold flex items-center gap-1">
-        <span id="waveform-status" class="text-indigo-300 font-extrabold uppercase tracking-wide">සූදානම්</span>
+      <!-- Premium Editorial Header -->
+      <header class="mb-8 md:mb-12 flex justify-between items-baseline shrink-0">
+        <div class="flex flex-col">
+          <span class="text-[10px] uppercase tracking-[0.25em] text-[#737373] font-bold flex items-center gap-2">
+            <span id="header-status-indicator" class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            Viruna Randinu Masterpiece / Online
+          </span>
+          <h1 class="font-serif text-4xl md:text-6xl font-bold tracking-tight leading-none mt-2">
+            Gemini 3.1<br/><span class="italic text-[#E53935]">Flash Lite</span>
+          </h1>
+        </div>
+        <div class="text-right hidden sm:block">
+          <span class="text-[10px] uppercase tracking-[0.25em] text-[#737373] font-bold block">Latency</span>
+          <p class="text-2xl font-light font-mono mt-1 text-[#F2F2F2]">14ms</p>
+        </div>
+      </header>
+
+      <!-- Waveform and Live Activity Monitor -->
+      <div class="bg-[#141414] border border-white/5 rounded-2xl p-5 mb-6 flex flex-col items-center justify-center relative overflow-hidden shrink-0">
+        <div class="absolute top-4 left-5 text-[9px] font-mono uppercase tracking-[0.2em] text-[#737373] flex items-center gap-2">
+          <i data-lucide="headphones" class="w-3 h-3 text-[#E53935]"></i>
+          <span>Live Audio Stream Wave</span>
+        </div>
+        
+        <div class="absolute top-4 right-5">
+          <span id="waveform-label" class="text-[9px] font-mono uppercase tracking-[0.2em] text-[#737373] transition-colors duration-300">
+            Standby
+          </span>
+        </div>
+
+        <!-- Waveform Container -->
+        <div class="relative w-full flex justify-center items-center h-20 my-2">
+          <svg id="waveform-svg" class="w-full max-w-lg h-14" viewBox="0 0 400 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path id="wave-path-1" d="M 0 50 Q 100 50, 200 50 T 400 50" stroke="url(#gradient1)" stroke-width="2.5" stroke-linecap="round" />
+            <path id="wave-path-2" d="M 0 50 Q 100 50, 200 50 T 400 50" stroke="url(#gradient2)" stroke-width="1.5" stroke-linecap="round" opacity="0.4" />
+            <defs>
+              <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#E53935" />
+                <stop offset="100%" stop-color="#737373" />
+              </linearGradient>
+              <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#333" />
+                <stop offset="100%" stop-color="#E53935" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <!-- STT Errors Panel -->
+        <div id="stt-error-bar" class="hidden mt-1 text-xs text-[#E53935] font-bold flex items-center gap-2 bg-[#E53935]/5 border border-[#E53935]/20 px-4 py-2 rounded-lg animate-pulse">
+          <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
+          <span id="stt-error-text">දෝෂයක් සිදු විය</span>
+        </div>
+
+        <p class="text-[10px] text-[#737373] text-center mt-2 font-mono">
+          Press <span class="bg-[#252525] text-white px-1.5 py-0.5 rounded border border-white/5 font-bold">A</span> on keyboard to open Admin Settings
+        </p>
       </div>
 
-      <!-- Glowing pulse gradient ring in background behind Waveform -->
-      <div id="glow-pulse" class="absolute w-44 h-44 bg-indigo-100 rounded-full blur-2xl opacity-40 pointer-events-none transition-all duration-500"></div>
+      <!-- Dialogue History / Conversation Logs -->
+      <div id="dialogue-box" class="flex-1 overflow-y-auto space-y-6 pr-2 no-scrollbar mb-6 min-h-[180px]">
+        
+        <!-- Welcome card message -->
+        <div class="flex flex-col items-start animate-fade-in">
+          <div class="max-w-[90%] border-l-2 border-[#E53935] pl-5 py-2">
+            <p class="text-lg md:text-xl font-light leading-relaxed italic text-[#F2F2F2]">
+              "ආයුබෝවන්! මම VIRU AI. මට සිංහලෙන් ඕනෑම දෙයක් කියන්න හෝ අසන්න. මම ඔබට කටහඬින් සහ ලිඛිතව දිගු, විස්තරාත්මක පිළිතුරු සැපයීමට සූදානම්! 🚀😎"
+            </p>
+          </div>
+          <span class="text-[9px] font-mono uppercase tracking-widest text-[#737373] mt-2 pl-5">SYSTEM GREETING</span>
+        </div>
 
-      <!-- Waveform SVG Container -->
-      <div class="relative z-10 w-full flex justify-center items-center h-24">
-        <svg id="waveform-svg" class="w-full max-w-md h-16" viewBox="0 0 400 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path id="wave-path-1" d="M 0 50 Q 100 50, 200 50 T 400 50" stroke="url(#gradient1)" stroke-width="3.5" stroke-linecap="round" />
-          <path id="wave-path-2" d="M 0 50 Q 100 50, 200 50 T 400 50" stroke="url(#gradient2)" stroke-width="2" stroke-linecap="round" opacity="0.5" />
-          <defs>
-            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#4f46e5" />
-              <stop offset="50%" stop-color="#818cf8" />
-              <stop offset="100%" stop-color="#c084fc" />
-            </linearGradient>
-            <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#c084fc" />
-              <stop offset="50%" stop-color="#f472b6" />
-              <stop offset="100%" stop-color="#818cf8" />
-            </linearGradient>
-          </defs>
-        </svg>
       </div>
 
-      <!-- Error Alerts Notification Bar -->
-      <div id="listening-error-alert" class="hidden mt-1.5 text-xs text-red-600 font-extrabold flex items-center gap-1.5 bg-red-50 border border-red-100 px-4 py-2 rounded-full shadow-sm animate-bounce">
-        <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-red-500"></i>
-        <span id="error-alert-text">දෝෂයක් සිදුවිය</span>
+      <!-- Suggested Editorial Preset Chips -->
+      <div class="flex items-center gap-2 overflow-x-auto py-2 no-scrollbar shrink-0 w-full border-t border-white/5 mb-4">
+        <button onclick="submitPreset('ලස්සන සිංහල කවියක් කියන්න')" class="text-[11px] uppercase tracking-wider font-bold bg-[#141414] hover:bg-[#1C1C1C] text-[#F2F2F2] border border-white/5 px-4 py-2.5 rounded-lg transition-all shrink-0 hover:border-[#E53935]/50">
+          කවියක් කියන්න 📝
+        </button>
+        <button onclick="submitPreset('කෙටි සිංහල ජන කතාවක් කියන්න')" class="text-[11px] uppercase tracking-wider font-bold bg-[#141414] hover:bg-[#1C1C1C] text-[#F2F2F2] border border-white/5 px-4 py-2.5 rounded-lg transition-all shrink-0 hover:border-[#E53935]/50">
+          ජන කතාවක් 🌾
+        </button>
+        <button onclick="submitPreset('ශ්‍රී ලංකාවේ ප්‍රසිද්ධ සංචාරක ස්ථාන මොනවාද?')" class="text-[11px] uppercase tracking-wider font-bold bg-[#141414] hover:bg-[#1C1C1C] text-[#F2F2F2] border border-white/5 px-4 py-2.5 rounded-lg transition-all shrink-0 hover:border-[#E53935]/50">
+          සංචාරක ස්ථාන 🗺️
+        </button>
+        <button onclick="submitPreset('කිරි බත් සාදන ආකාරය කියන්න')" class="text-[11px] uppercase tracking-wider font-bold bg-[#141414] hover:bg-[#1C1C1C] text-[#F2F2F2] border border-white/5 px-4 py-2.5 rounded-lg transition-all shrink-0 hover:border-[#E53935]/50">
+          කෑම වට්ටෝරුවක් 🍲
+        </button>
       </div>
 
-      <!-- Navigation/Action helper text -->
-      <p id="instruction-label" class="text-[11px] text-indigo-500/80 text-center mt-2 font-medium">
-        පහත <strong class="text-indigo-600 font-extrabold">මයික්‍රෆෝනය</strong> ඔබා සිංහලෙන් කතා කරන්න
-      </p>
+      <!-- Bottom Primary Interactive Action Dock -->
+      <div class="border-t border-white/5 pt-4 shrink-0 bg-[#0D0D0D]">
+        
+        <!-- Continuous Interaction Mode Bar -->
+        <div class="flex items-center justify-between mb-4 bg-[#141414] border border-white/5 px-4 py-3 rounded-xl">
+          <div class="flex flex-col">
+            <span class="text-xs uppercase tracking-wider font-bold text-[#F2F2F2]">Continuous Interaction Mode</span>
+            <span class="text-[10px] text-[#737373] mt-0.5">AI කතා කර අවසන් වූ පසු මයික්‍රෆෝනය ඉබේම ක්‍රියාත්මක වේ.</span>
+          </div>
+          <button
+            id="btn-continuous"
+            class="text-[10px] uppercase tracking-wider px-3.5 py-1.5 rounded font-mono font-bold border transition-all cursor-pointer bg-[#252525] border-white/10 text-[#737373]"
+          >
+            OFF
+          </button>
+        </div>
+
+        <!-- Text Input Mode UI -->
+        <div id="text-mode-container" class="hidden flex items-center gap-3">
+          <input
+            id="text-input"
+            type="text"
+            placeholder="ඔබගේ ප්‍රශ්නය මෙතැන ලියන්න..."
+            class="flex-1 bg-[#141414] border border-white/10 focus:border-[#E53935] focus:outline-none rounded-xl py-4 px-5 text-sm text-[#F2F2F2] transition-all font-sans"
+          >
+          <button
+            id="btn-send-text"
+            class="p-4 bg-[#E53935] hover:bg-[#C62828] text-white rounded-xl transition-all cursor-pointer shadow-md"
+          >
+            <i data-lucide="send" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Voice Mode UI (Main Circular Action Button) -->
+        <div id="voice-mode-container" class="flex flex-col items-center py-2">
+          <div class="relative flex items-center justify-center">
+            <div id="pulse-ring-listening" class="hidden absolute inset-0 bg-[#E53935]/20 rounded-full animate-ping scale-150"></div>
+            <div id="pulse-ring-speaking" class="hidden absolute inset-0 bg-emerald-500/10 rounded-full animate-ping scale-125"></div>
+
+            <button
+              id="btn-mic"
+              class="w-16 h-16 rounded-2xl flex flex-col items-center justify-center transition-all transform hover:scale-105 active:scale-95 cursor-pointer bg-[#E53935] hover:bg-[#C62828] text-white"
+            >
+              <i data-lucide="mic" id="mic-icon" class="w-6 h-6"></i>
+            </button>
+          </div>
+
+          <span id="mic-status" class="text-[11px] uppercase tracking-widest font-mono font-bold mt-3 text-[#737373]">
+            Tap to speak in Sinhala
+          </span>
+        </div>
+
+        <!-- Mode Toggle Trigger at structural margin -->
+        <div class="flex justify-between items-center mt-4 pt-4 border-t border-white/5">
+          <div class="flex space-x-6 text-[10px] uppercase tracking-widest text-[#737373] font-bold">
+            <span>v3.1.0-Lite</span>
+            <span>Cloudflare Edge Enabled</span>
+          </div>
+          <button
+            id="btn-input-toggle"
+            class="text-[10px] uppercase tracking-widest font-bold text-[#E53935] hover:underline cursor-pointer"
+          >
+            Switch to Text Mode
+          </button>
+        </div>
+
+      </div>
+
     </div>
 
-    <!-- Collapsible Settings Panel (Advanced configurations & Keys) -->
-    <div id="settings-panel" class="hidden bg-white border border-indigo-100 rounded-3xl p-5 mb-4 shadow-xl shadow-indigo-100/30 space-y-4 animate-fade-in shrink-0 z-30">
-      <div class="flex items-center justify-between border-b border-indigo-50 pb-3">
-        <h3 class="text-sm font-black text-indigo-950 flex items-center gap-2 font-display">
-          <i data-lucide="sliders" class="w-4 h-4 text-indigo-600"></i>
-          කටහඬ සහ කෘත්‍රිම බුද්ධි සැකසුම් (Settings)
+    <!-- RIGHT PANEL: Collapsible Admin Settings Console -->
+    <!-- Triggered via pressing "A" keyboard key or header icon -->
+    <div id="admin-panel" class="hidden md:flex w-full md:w-[380px] bg-[#0A0A0A] border-t md:border-t-0 border-white/5 flex-col p-8 shrink-0 relative animate-fade-in">
+      
+      <div class="mb-10">
+        <h2 class="text-2xl font-serif font-bold italic text-[#F2F2F2] flex items-center gap-2">
+          Admin Settings
+        </h2>
+        <div class="h-[2px] w-12 bg-[#E53935] mt-2"></div>
+      </div>
+
+      <div class="flex-1 space-y-8 overflow-y-auto no-scrollbar">
+        
+        <!-- Credentials / API Key -->
+        <section class="space-y-3">
+          <span class="text-[10px] uppercase tracking-widest text-[#737373] font-bold block">Access Credentials</span>
+          <div class="bg-[#141414] border border-white/5 rounded-xl p-4 space-y-3">
+            <label class="block text-[11px] text-[#737373] font-mono">GEMINI API KEY</label>
+            <div class="relative">
+              <input
+                id="api-key"
+                type="password"
+                placeholder="Cloudflare / Local Storage Secure Key"
+                class="w-full bg-[#0D0D0D] border border-white/10 rounded-lg pl-3 pr-10 py-2.5 text-xs text-[#F2F2F2] font-mono focus:border-[#E53935] focus:outline-none"
+              >
+              <button
+                id="btn-show-key"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-[#737373] hover:text-[#F2F2F2]"
+              >
+                <i data-lucide="eye" class="w-4 h-4" id="eye-icon"></i>
+              </button>
+            </div>
+            <p class="text-[9px] text-[#737373] leading-relaxed">
+              * Automatically loaded from Cloudflare Edge Secrets (process.env) or persisted locally in your browser.
+            </p>
+          </div>
+        </section>
+
+        <!-- Voice engine configuration -->
+        <section class="space-y-4">
+          <div>
+            <span class="text-[10px] uppercase tracking-widest text-[#737373] font-bold block mb-2">Voice Engine</span>
+            <div class="bg-[#141414] p-1 rounded-lg border border-white/5 flex">
+              <button
+                id="engine-gemini"
+                class="flex-1 text-[10px] uppercase tracking-widest py-2 font-bold rounded transition-all bg-[#E53935] text-white"
+              >
+                Gemini AI Voice
+              </button>
+              <button
+                id="engine-system"
+                class="flex-1 text-[10px] uppercase tracking-widest py-2 font-bold rounded transition-all text-[#737373] hover:text-[#F2F2F2]"
+              >
+                System TTS
+              </button>
+            </div>
+          </div>
+
+          <!-- Prebuilt high-fidelity voices selection -->
+          <div id="gemini-voices-group">
+            <span class="text-[10px] uppercase tracking-widest text-[#737373] font-bold block mb-2">Select Gemini Voice Profile</span>
+            <select
+              id="select-gemini-voice"
+              class="w-full bg-[#141414] border border-white/10 text-xs text-[#F2F2F2] rounded-lg py-2.5 px-3 focus:outline-none focus:border-[#E53935]"
+            >
+              <option value="Puck">Puck (Energetic Girl / කෙල්ලෙක්ගේ කටහඬ) ⭐</option>
+              <option value="Kore">Kore (Warm Female / මෘදු කාන්තා කටහඬ)</option>
+              <option value="Zephyr">Zephyr (Bright Female / පැහැදිලි කාන්තා කටහඬ)</option>
+              <option value="Charon">Charon (Deep Male / ගම්භීර පිරිමි කටහඬ)</option>
+              <option value="Fenrir">Fenrir (Casual Male / සාමාන්‍ය පිරිමි කටහඬ)</option>
+            </select>
+          </div>
+
+          <!-- Native web synthesis voice selection fallback -->
+          <div id="system-voices-group" class="hidden">
+            <span class="text-[10px] uppercase tracking-widest text-[#737373] font-bold block mb-2">Select Local System Voice</span>
+            <select
+              id="select-system-voice"
+              class="w-full bg-[#141414] border border-white/10 text-xs text-[#F2F2F2] rounded-lg py-2.5 px-3 focus:outline-none focus:border-[#E53935]"
+            >
+              <option value="">Default System Engine</option>
+            </select>
+          </div>
+
+          <!-- Range speed and pitch adjust sliders -->
+          <div class="grid grid-cols-2 gap-4 bg-[#141414] border border-white/5 rounded-xl p-4">
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-[10px] text-[#737373] uppercase tracking-wider font-mono">Speed</span>
+                <span id="speed-indicator" class="text-[10px] font-mono text-[#E53935]">1.0x</span>
+              </div>
+              <input
+                id="slider-speed"
+                type="range"
+                min="0.5"
+                max="2.0"
+                step="0.1"
+                value="1.0"
+                class="w-full accent-[#E53935] h-1 bg-[#252525] rounded-lg appearance-none cursor-pointer"
+              >
+            </div>
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-[10px] text-[#737373] uppercase tracking-wider font-mono">Pitch</span>
+                <span id="pitch-indicator" class="text-[10px] font-mono text-[#E53935]">1.0</span>
+              </div>
+              <input
+                id="slider-pitch"
+                type="range"
+                min="0.5"
+                max="1.5"
+                step="0.1"
+                value="1.0"
+                disabled
+                class="w-full accent-[#E53935] h-1 bg-[#252525] rounded-lg appearance-none cursor-pointer disabled:opacity-30"
+              >
+            </div>
+          </div>
+
+        </section>
+
+        <!-- Dynamic vocal system diagnostics tests -->
+        <section class="pt-2">
+          <button
+            id="btn-voice-test"
+            class="w-full py-3 bg-[#E53935] hover:bg-[#C62828] text-white text-xs uppercase tracking-widest font-bold rounded-lg transition-all shadow-md cursor-pointer"
+          >
+            Test Audio Output
+          </button>
+        </section>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- PASSWORD PROMPT MODAL -->
+  <div id="password-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 animate-fade-in">
+    <div class="bg-[#141414] border border-white/10 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+      <div class="flex justify-between items-center border-b border-white/5 pb-3 mb-5">
+        <h3 class="text-sm font-serif font-bold italic text-[#F2F2F2] flex items-center gap-2">
+          <i data-lucide="lock" class="w-4 h-4 text-[#E53935]"></i>
+          Administrator Authorization
         </h3>
-        <button id="btn-close-settings" class="text-indigo-400 hover:text-indigo-600 p-1 rounded-lg">
+        <button
+          id="btn-close-modal"
+          class="text-[#737373] hover:text-[#F2F2F2] p-1 rounded cursor-pointer"
+        >
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <!-- Gemini API Key configuration block -->
-      <div class="bg-indigo-50/50 p-3.5 rounded-2xl border border-indigo-100">
-        <label class="block text-xs font-black text-indigo-950 mb-1.5 flex items-center justify-between">
-          <span class="flex items-center gap-1.5">
-            <i data-lucide="key" class="w-3.5 h-3.5 text-indigo-600"></i>
-            Gemini API Key එක ඇතුලත් කරන්න
-          </span>
-          <a
-            href="https://aistudio.google.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-[10px] text-indigo-600 hover:underline font-extrabold"
-          >
-            නොමිලේ ලබාගන්න (Get Free Key) ↗
-          </a>
-        </label>
-        <div class="relative">
+      <form id="password-form" class="space-y-4">
+        <div>
+          <label class="block text-[11px] uppercase tracking-widest text-[#737373] font-bold mb-2">
+            Enter PIN Code to Unlock:
+          </label>
           <input
-            id="api-key-input"
+            id="password-input"
             type="password"
-            placeholder="AI Studio API Key (AIzaSy...)"
-            class="w-full bg-white border border-indigo-100 text-indigo-950 text-xs font-bold rounded-xl pl-3 pr-10 py-2.5 focus:ring-4 focus:ring-indigo-100 focus:outline-none transition-all placeholder:text-indigo-300 font-mono"
+            placeholder="••••"
+            class="w-full bg-[#0D0D0D] border border-white/10 text-[#F2F2F2] text-center text-lg font-mono tracking-widest rounded-lg py-3 focus:border-[#E53935] focus:outline-none"
+            maxlength="4"
+            autoFocus
           >
+        </div>
+
+        <p id="password-error" class="hidden text-xs text-[#E53935] font-bold flex items-center gap-1.5 animate-pulse">
+          <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
+          <span>වැරදි මුරපදයක්! නැවත උත්සාහ කරන්න.</span>
+        </p>
+
+        <div class="flex gap-2">
           <button
             type="button"
-            id="btn-toggle-key"
-            class="absolute right-3 top-1/2 -translate-y-1/2 text-indigo-400 hover:text-indigo-600 p-1 rounded-lg"
+            id="btn-cancel-modal"
+            class="flex-1 py-2.5 border border-white/10 text-[#737373] hover:text-[#F2F2F2] text-xs font-bold rounded-lg transition-all cursor-pointer"
           >
-            <i data-lucide="eye" class="w-4 h-4" id="eye-icon"></i>
-          </button>
-        </div>
-        <span class="text-[9px] text-indigo-500/80 mt-1.5 block font-medium leading-relaxed">
-          * මෙම කේතය ඔබගේ බ්‍රවුසරයෙහි (local storage) සුරක්ෂිතව තැන්පත් වන අතර, Cloudflare Secrets (ENV) හරහාද ක්‍රියා කරයි!
-        </span>
-      </div>
-
-      <!-- Advanced Voice Engine/Provider Selector -->
-      <div>
-        <label class="block text-xs font-bold text-indigo-900/80 mb-1.5 flex items-center gap-1.5">
-          <i data-lucide="cpu" class="w-3.5 h-3.5 text-indigo-500"></i>
-          කටහඬ තාක්ෂණය (Voice Engine)
-        </label>
-        <div class="bg-indigo-50/50 p-1 rounded-2xl border border-indigo-100 flex">
-          <button
-            type="button"
-            id="toggle-provider-gemini"
-            class="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-black rounded-xl transition-all"
-          >
-            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-            Gemini AI Voice (ස්වභාවික AI)
+            අවලංගු කරන්න
           </button>
           <button
-            type="button"
-            id="toggle-provider-system"
-            class="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-black rounded-xl transition-all"
+            type="submit"
+            class="flex-1 py-2.5 bg-[#E53935] hover:bg-[#C62828] text-white text-xs font-bold rounded-lg transition-all cursor-pointer"
           >
-            <i data-lucide="globe" class="w-3.5 h-3.5"></i>
-            System TTS (පද්ධති කටහඬ)
+            තහවුරු කරන්න
           </button>
         </div>
-      </div>
-
-      <!-- Gemini Prebuilt Voice Picker -->
-      <div id="gemini-voice-block">
-        <label class="block text-xs font-bold text-indigo-900/80 mb-1.5 flex items-center gap-1.5">
-          <i data-lucide="user" class="w-3.5 h-3.5 text-indigo-500"></i>
-          Gemini කටහඬ තෝරන්න (Select Gemini AI Voice)
-        </label>
-        <select id="gemini-voice-select" class="w-full bg-indigo-50/50 border border-indigo-100 text-indigo-950 text-xs font-bold rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-200">
-          <option value="Puck">Puck (Energetic Young Girl / කෙල්ලෙක්ගේ කටහඬ) ⭐</option>
-          <option value="Kore">Kore (Warm Female / මෘදු කාන්තා කටහඬ)</option>
-          <option value="Zephyr">Zephyr (Bright Female / පැහැදිලි කාන්තා කටහඬ)</option>
-          <option value="Charon">Charon (Deep Male / ගම්භීර පිරිමි කටහඬ)</option>
-          <option value="Fenrir">Fenrir (Casual Male / සාමාන්‍ය පිරිමි කටහඬ)</option>
-        </select>
-        <p class="text-[10px] text-indigo-500/80 mt-1 font-medium">* Puck යනු ඉතා ස්වභාවික, ආකර්ෂණීය තරුණ ගැහැණු ළමයෙකුගේ කටහඬකි (තරුණ කෙල්ලකගේ කටහඬ).</p>
-      </div>
-
-      <!-- System Text-to-Speech Voice Picker (Hidden by default unless selected) -->
-      <div id="system-voice-block" class="hidden">
-        <label class="block text-xs font-bold text-indigo-900/80 mb-1.5 flex items-center gap-1.5">
-          <i data-lucide="volume-2" class="w-3.5 h-3.5 text-indigo-500"></i>
-          පද්ධති කටහඬ තෝරන්න (Select System Voice)
-        </label>
-        <select id="voice-select" class="w-full bg-indigo-50/50 border border-indigo-100 text-indigo-950 text-xs font-bold rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-200">
-          <option value="">පෙරනිමි කටහඬ (System Default)</option>
-        </select>
-      </div>
-
-      <!-- Voice Pitch & Speed parameters range controls -->
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="text-xs font-bold text-indigo-900/80 mb-1 flex items-center justify-between">
-            <span>ශබ්ද වේගය (Speed)</span>
-            <span id="speed-val" class="font-mono text-[10px] text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded font-black">1.0x</span>
-          </label>
-          <input id="slider-speed" type="range" min="0.5" max="2.0" step="0.1" value="1.0" class="w-full accent-indigo-600 h-1 bg-indigo-100 rounded-lg appearance-none cursor-pointer">
-        </div>
-        <div>
-          <label class="text-xs font-bold text-indigo-900/80 mb-1 flex items-center justify-between">
-            <span>කටහඬ තාරතාව (Pitch)</span>
-            <span id="pitch-val" class="font-mono text-[10px] text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded font-black">1.0</span>
-          </label>
-          <input id="slider-pitch" type="range" min="0.5" max="1.5" step="0.1" value="1.0" class="w-full accent-indigo-600 h-1 bg-indigo-100 rounded-lg appearance-none cursor-pointer">
-        </div>
-      </div>
-
-      <button id="btn-test-voice" class="w-full py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-bold rounded-xl flex items-center justify-center gap-2 border border-indigo-100 transition-all shadow-sm">
-        <i data-lucide="volume-2" class="w-4 h-4"></i>
-        කටහඬ පරීක්ෂා කරන්න (Test Voice Output)
-      </button>
+      </form>
     </div>
+  </div>
 
-    <!-- Conversation Logs / Chat Dialog Box -->
-    <div id="chat-box" class="flex-1 overflow-y-auto bg-white/70 border border-indigo-100/60 rounded-3xl p-5 space-y-4 shadow-xl shadow-indigo-100/20 min-h-[220px]">
-      <!-- Default Interactive Greetings -->
-      <div class="flex flex-col items-start animate-fade-in">
-        <div class="max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm bg-white border border-indigo-100 text-indigo-950 rounded-tl-none font-medium">
-          <p>ආයුබෝවන්! මම VIRU AI. මට සිංහලෙන් ඕනෑම දෙයක් කියන්න හෝ අසන්න. මම ඔබට කටහඬින් සහ ලිඛිතව දිගු, විස්තරාත්මක පිළිතුරු සැපයීමට සූදානම්! 🚀😎</p>
-        </div>
-        <span class="text-[9px] text-indigo-400 font-extrabold mt-1 px-1">Welcome</span>
-      </div>
-    </div>
-
-    <!-- Suggested Preset chips container (Horizontal Scroll) -->
-    <div class="flex items-center gap-2 overflow-x-auto py-3 no-scrollbar shrink-0 w-full">
-      <button onclick="sendPreset('ලස්සන සිංහල කවියක් කියන්න')" class="text-xs bg-white hover:bg-indigo-50 border-2 border-indigo-100 text-indigo-800 px-4 py-2.5 rounded-2xl font-extrabold transition-all shrink-0 hover:border-indigo-400 shadow-sm">
-        කවියක් කියන්න 📝
-      </button>
-      <button onclick="sendPreset('කෙටි සිංහල ජන කතාවක් කියන්න')" class="text-xs bg-white hover:bg-indigo-50 border-2 border-indigo-100 text-indigo-800 px-4 py-2.5 rounded-2xl font-extrabold transition-all shrink-0 hover:border-indigo-400 shadow-sm">
-        ජන කතාවක් 🌾
-      </button>
-      <button onclick="sendPreset('ශ්‍රී ලංකාවේ ප්‍රසිද්ධ සංචාරක ස්ථාන මොනවාද?')" class="text-xs bg-white hover:bg-indigo-50 border-2 border-indigo-100 text-indigo-800 px-4 py-2.5 rounded-2xl font-extrabold transition-all shrink-0 hover:border-indigo-400 shadow-sm">
-        සංචාරක ස්ථාන 🗺️
-      </button>
-      <button onclick="sendPreset('කිරි බත් සාදන ආකාරය කියන්න')" class="text-xs bg-white hover:bg-indigo-50 border-2 border-indigo-100 text-indigo-800 px-4 py-2.5 rounded-2xl font-extrabold transition-all shrink-0 hover:border-indigo-400 shadow-sm">
-        කෑම වට්ටෝරුවක් 🍲
-      </button>
-    </div>
-
-  </main>
-
-  <!-- Interactive Footer dock controls -->
-  <footer class="sticky bottom-0 bg-white/95 backdrop-blur-md border-t border-indigo-100 p-4 max-w-2xl mx-auto w-full shadow-lg rounded-t-3xl shrink-0 z-20">
-    
-    <!-- Hands-Free auto continuous speech controller -->
-    <div class="flex items-center justify-between mb-3 bg-indigo-50/80 border border-indigo-100 px-4 py-2.5 rounded-2xl">
-      <div class="flex flex-col">
-        <span class="text-xs font-black text-indigo-950">අඛණ්ඩ හඬ සංවාදය (Continuous Mode)</span>
-        <span class="text-[10px] text-indigo-500 font-semibold">AI කතා කර අවසන් වූ පසු මයික්‍රෆෝනය ඉබේම ක්‍රියාත්මක වේ.</span>
-      </div>
-      <button
-        id="btn-toggle-continuous-mode"
-        class="text-xs px-4 py-2 rounded-xl font-black transition-all shadow-sm bg-indigo-100/80 text-indigo-600 hover:bg-indigo-100"
-      >
-        අක්‍රීයයි (OFF)
-      </button>
-    </div>
-
-    <!-- Text-to-Text Input Section (Toggleable) -->
-    <div id="text-mode-input" class="hidden flex items-center gap-2">
-      <input
-        id="text-input-field"
-        type="text"
-        placeholder="ඔබගේ ප්‍රශ්නය මෙතැන ලියන්න..."
-        class="flex-1 bg-indigo-50 border border-indigo-100 focus:ring-4 focus:ring-indigo-100 focus:outline-none rounded-2xl py-4 px-5 text-sm text-indigo-950 font-bold transition-all placeholder:text-indigo-300"
-      >
-      <button
-        id="btn-send-text"
-        class="p-4 bg-indigo-600 text-white rounded-2xl font-black transition-all shadow-lg shadow-indigo-100 hover:bg-indigo-700"
-      >
-        <i data-lucide="send" class="w-5 h-5"></i>
-      </button>
-    </div>
-
-    <!-- Realtime Voice/Microphone capture block -->
-    <div id="voice-mode-input" class="flex flex-col items-center py-2">
-      <div class="relative flex items-center justify-center">
-        <!-- Glow effects surrounding action -->
-        <div id="mic-ping-listener" class="hidden absolute inset-0 bg-red-500/20 rounded-full animate-ping scale-150"></div>
-        <div id="mic-ping-speaker" class="hidden absolute inset-0 bg-indigo-500/20 rounded-full animate-ping scale-125"></div>
-
-        <button
-          id="btn-mic"
-          class="w-20 h-20 rounded-3xl flex flex-col items-center justify-center shadow-2xl transition-all transform hover:scale-105 active:scale-95 bg-indigo-600 text-white shadow-xl shadow-indigo-200 hover:bg-indigo-700"
-        >
-          <i data-lucide="mic" id="mic-icon" class="w-8 h-8"></i>
-        </button>
-      </div>
-
-      <span id="mic-status-label" class="text-xs font-extrabold mt-3 text-indigo-900">
-        සිංහලෙන් කතා කිරීමට ඔබන්න (Tap to Speak)
-      </span>
-    </div>
-  </footer>
-
-  <!-- Core Pure JS Runtime and Cloudflare Compatibility Layer -->
+  <!-- JAVASCRIPT: High-Performance Pure Dynamic Interactive Controller -->
   <script>
-    // System States
+    // App Operational Configurations
     let isTextMode = false;
     let isContinuousMode = false;
     let isListening = false;
     let isSpeaking = false;
     let isThinking = false;
     let recognition = null;
-    let currentSpeechUtterance = null;
-    let selectedVoice = null;
-    let voicesList = [];
-    let messages = [];
-    let ws = null; // WebSocket persistent connection instance placeholder
+    let messages = [
+      {
+        id: 1,
+        role: "model",
+        text: "ආයුබෝවන්! මම VIRU AI. මට සිංහලෙන් ඕනෑම දෙයක් කියන්න හෝ අසන්න. මම ඔබට කටහඬින් සහ ලිඛිතව දිගු, විස්තරාත්මක පිළිතුරු සැපයීමට සූදානම්! 🚀😎"
+      }
+    ];
 
-    // WebAudio instances to prevent memory leakage
-    let activeAudio = null;
-    let activeSourceNode = null;
-    let activeAudioCtx = null;
-
-    // Load configurations - Works securely with Cloudflare Secrets (ENV variables)
+    // Read Key and Settings safely (Supports direct environment injections and LocalStorage)
     let apiKey = window.CLOUDFLARE_GEMINI_API_KEY || window.ENV_GEMINI_API_KEY || localStorage.getItem("viru_ai_api_key") || "";
+    let voiceProvider = localStorage.getItem("viru_ai_voice_provider") || "gemini";
+    let geminiVoice = localStorage.getItem("viru_ai_gemini_voice") || "Puck";
+    let systemVoiceName = localStorage.getItem("viru_ai_voice_name") || "";
     let voiceSpeed = parseFloat(localStorage.getItem("viru_ai_speed") || "1.0");
     let voicePitch = parseFloat(localStorage.getItem("viru_ai_pitch") || "1.0");
-    let savedVoiceName = localStorage.getItem("viru_ai_voice_name") || "";
-    let voiceProvider = localStorage.getItem("viru_ai_voice_provider") || "gemini"; // Default to high-fidelity Gemini AI voice
-    let geminiVoice = localStorage.getItem("viru_ai_gemini_voice") || "Puck";
 
-    // DOM Nodes Binding
-    const btnToggleInputMode = document.getElementById("btn-toggle-input-mode");
-    const btnToggleSettings = document.getElementById("btn-toggle-settings");
-    const btnClearChat = document.getElementById("btn-clear-chat");
-    const btnCloseSettings = document.getElementById("btn-close-settings");
-    const settingsPanel = document.getElementById("settings-panel");
-    const apiKeyInput = document.getElementById("api-key-input");
-    const btnToggleKey = document.getElementById("btn-toggle-key");
-    const voiceSelect = document.getElementById("voice-select");
-    const geminiVoiceSelect = document.getElementById("gemini-voice-select");
-    const sliderSpeed = document.getElementById("slider-speed");
-    const sliderPitch = document.getElementById("slider-pitch");
-    const speedVal = document.getElementById("speed-val");
-    const pitchVal = document.getElementById("pitch-val");
-    const btnTestVoice = document.getElementById("btn-test-voice");
-    const chatBox = document.getElementById("chat-box");
-    const btnToggleContinuousMode = document.getElementById("btn-toggle-continuous-mode");
-    const textModeInput = document.getElementById("text-mode-input");
-    const voiceModeInput = document.getElementById("voice-mode-input");
-    const textInputField = document.getElementById("text-input-field");
+    let activeAudio = null;
+    let systemVoices = [];
+
+    // DOM bindings
+    const dialogueBox = document.getElementById("dialogue-box");
+    const textModeContainer = document.getElementById("text-mode-container");
+    const voiceModeContainer = document.getElementById("voice-mode-container");
+    const btnInputToggle = document.getElementById("btn-input-toggle");
+    const textInput = document.getElementById("text-input");
     const btnSendText = document.getElementById("btn-send-text");
     const btnMic = document.getElementById("btn-mic");
     const micIcon = document.getElementById("mic-icon");
-    const micStatusLabel = document.getElementById("mic-status-label");
-    const micPingListener = document.getElementById("mic-ping-listener");
-    const micPingSpeaker = document.getElementById("mic-ping-speaker");
-    const statusIndicator = document.getElementById("status-indicator");
-    const waveformStatus = document.getElementById("waveform-status");
-    const glowPulse = document.getElementById("glow-pulse");
-    const listeningErrorAlert = document.getElementById("listening-error-alert");
-    const errorAlertText = document.getElementById("error-alert-text");
-    const instructionLabel = document.getElementById("instruction-label");
+    const micStatus = document.getElementById("mic-status");
+    const pulseRingListening = document.getElementById("pulse-ring-listening");
+    const pulseRingSpeaking = document.getElementById("pulse-ring-speaking");
+    const waveformLabel = document.getElementById("waveform-label");
+    const headerStatusIndicator = document.getElementById("header-status-indicator");
+    const sttErrorBar = document.getElementById("stt-error-bar");
+    const sttErrorText = document.getElementById("stt-error-text");
+
+    const btnContinuous = document.getElementById("btn-continuous");
+    const adminPanel = document.getElementById("admin-panel");
+    const passwordModal = document.getElementById("password-modal");
+    const passwordForm = document.getElementById("password-form");
+    const passwordInput = document.getElementById("password-input");
+    const passwordError = document.getElementById("password-error");
+    const btnCloseModal = document.getElementById("btn-close-modal");
+    const btnCancelModal = document.getElementById("btn-cancel-modal");
+
+    const apiKeyInput = document.getElementById("api-key");
+    const btnShowKey = document.getElementById("btn-show-key");
     const eyeIcon = document.getElementById("eye-icon");
+    const engineGemini = document.getElementById("engine-gemini");
+    const engineSystem = document.getElementById("engine-system");
+    const geminiVoicesGroup = document.getElementById("gemini-voices-group");
+    const systemVoicesGroup = document.getElementById("system-voices-group");
+    const selectGeminiVoice = document.getElementById("select-gemini-voice");
+    const selectSystemVoice = document.getElementById("select-system-voice");
+    const sliderSpeed = document.getElementById("slider-speed");
+    const sliderPitch = document.getElementById("slider-pitch");
+    const speedIndicator = document.getElementById("speed-indicator");
+    const pitchIndicator = document.getElementById("pitch-indicator");
+    const btnVoiceTest = document.getElementById("btn-voice-test");
 
-    const toggleProviderGemini = document.getElementById("toggle-provider-gemini");
-    const toggleProviderSystem = document.getElementById("toggle-provider-system");
-    const geminiVoiceBlock = document.getElementById("gemini-voice-block");
-    const systemVoiceBlock = document.getElementById("system-voice-block");
-
-    // Hydrate parameters on start
+    // Initialize DOM parameters
     if (apiKey) apiKeyInput.value = apiKey;
+    selectGeminiVoice.value = geminiVoice;
     sliderSpeed.value = voiceSpeed;
     sliderPitch.value = voicePitch;
-    speedVal.textContent = voiceSpeed.toFixed(1) + "x";
-    pitchVal.textContent = voicePitch.toFixed(1);
-    geminiVoiceSelect.value = geminiVoice;
+    speedIndicator.textContent = voiceSpeed.toFixed(1) + "x";
+    pitchIndicator.textContent = voicePitch.toFixed(1);
 
-    // Set voice provider UI styling
-    function updateProviderUI() {
-      if (voiceProvider === "gemini") {
-        toggleProviderGemini.className = "flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-black rounded-xl transition-all bg-indigo-600 text-white shadow-sm";
-        toggleProviderSystem.className = "flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-black rounded-xl transition-all text-indigo-600 hover:bg-indigo-50";
-        geminiVoiceBlock.classList.remove("hidden");
-        systemVoiceBlock.classList.add("hidden");
-        sliderPitch.disabled = true;
-      } else {
-        toggleProviderGemini.className = "flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-black rounded-xl transition-all text-indigo-600 hover:bg-indigo-50";
-        toggleProviderSystem.className = "flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-black rounded-xl transition-all bg-indigo-600 text-white shadow-sm";
-        geminiVoiceBlock.classList.add("hidden");
-        systemVoiceBlock.classList.remove("hidden");
-        sliderPitch.disabled = false;
-      }
-    }
-    updateProviderUI();
-
-    toggleProviderGemini.addEventListener("click", () => {
-      voiceProvider = "gemini";
-      localStorage.setItem("viru_ai_voice_provider", "gemini");
-      updateProviderUI();
-    });
-
-    toggleProviderSystem.addEventListener("click", () => {
-      voiceProvider = "system";
-      localStorage.setItem("viru_ai_voice_provider", "system");
-      updateProviderUI();
-    });
-
-    // Advanced dynamic mathematical SVG wave rendering
-    let animId = null;
+    // Dynamic wave animation loop
     const wavePath1 = document.getElementById("wave-path-1");
     const wavePath2 = document.getElementById("wave-path-2");
-
-    function renderDynamicWave(timestamp) {
-      let amp = 4; // Flat base sine on idle
+    
+    function renderWave(timestamp) {
+      let amp = 3;
       let freq = 0.008;
 
       if (isListening) {
-        amp = 26; // High frequency capture simulation
-        freq = 0.022;
+        amp = 24;
+        freq = 0.024;
       } else if (isThinking) {
-        amp = 12; // Pulsing thinking wave
-        freq = 0.035;
+        amp = 10;
+        freq = 0.038;
       } else if (isSpeaking) {
-        amp = 22; // Resonant audio frequency
+        amp = 20;
         freq = 0.016;
       }
 
       const offset1 = timestamp * freq;
-      const offset2 = timestamp * (freq * 0.75) + 120;
+      const offset2 = timestamp * (freq * 0.72) + 120;
 
       let d1 = "M 0 50";
       let d2 = "M 0 50";
@@ -517,62 +535,88 @@
       wavePath1.setAttribute("d", d1);
       wavePath2.setAttribute("d", d2);
 
-      animId = requestAnimationFrame(renderDynamicWave);
+      requestAnimationFrame(renderWave);
     }
-    animId = requestAnimationFrame(renderDynamicWave);
+    requestAnimationFrame(renderWave);
 
-    // Populate Available TTS Voices
+    // Toggle Voice Engine Configuration
+    function applyVoiceEngineUI() {
+      if (voiceProvider === "gemini") {
+        engineGemini.className = "flex-1 text-[10px] uppercase tracking-widest py-2 font-bold rounded transition-all bg-[#E53935] text-white cursor-pointer";
+        engineSystem.className = "flex-1 text-[10px] uppercase tracking-widest py-2 font-bold rounded transition-all text-[#737373] hover:text-[#F2F2F2] cursor-pointer";
+        geminiVoicesGroup.classList.remove("hidden");
+        systemVoicesGroup.classList.add("hidden");
+        sliderPitch.disabled = true;
+      } else {
+        engineGemini.className = "flex-1 text-[10px] uppercase tracking-widest py-2 font-bold rounded transition-all text-[#737373] hover:text-[#F2F2F2] cursor-pointer";
+        engineSystem.className = "flex-1 text-[10px] uppercase tracking-widest py-2 font-bold rounded transition-all bg-[#E53935] text-white cursor-pointer";
+        geminiVoicesGroup.classList.add("hidden");
+        systemVoicesGroup.classList.remove("hidden");
+        sliderPitch.disabled = false;
+      }
+    }
+    applyVoiceEngineUI();
+
+    engineGemini.addEventListener("click", () => {
+      voiceProvider = "gemini";
+      localStorage.setItem("viru_ai_voice_provider", "gemini");
+      applyVoiceEngineUI();
+    });
+
+    engineSystem.addEventListener("click", () => {
+      voiceProvider = "system";
+      localStorage.setItem("viru_ai_voice_provider", "system");
+      applyVoiceEngineUI();
+    });
+
+    // Populate System Synthesizer Voices
     function loadSystemVoices() {
       if (typeof speechSynthesis === "undefined") return;
-      voicesList = speechSynthesis.getVoices();
-      
-      voiceSelect.innerHTML = '<option value="">පෙරනිමි කටහඬ (System Default)</option>';
-      
-      voicesList.forEach((voice) => {
+      systemVoices = speechSynthesis.getVoices();
+      selectSystemVoice.innerHTML = '<option value="">Default System Engine</option>';
+      systemVoices.forEach((voice) => {
         const isSinhala = voice.lang.includes("si") || voice.lang.includes("LK");
         const option = document.createElement("option");
         option.value = voice.name;
-        option.textContent = `${voice.name} (${voice.lang})${isSinhala ? ' - Sinhala ⭐' : ''}`;
-        
-        if (voice.name === savedVoiceName) {
+        option.textContent = `${voice.name} (${voice.lang})${isSinhala ? " - Sinhala ⭐" : ""}`;
+        if (voice.name === systemVoiceName) {
           option.selected = true;
-          selectedVoice = voice;
         }
-        voiceSelect.appendChild(option);
+        selectSystemVoice.appendChild(option);
       });
     }
-
     if (typeof speechSynthesis !== "undefined") {
       speechSynthesis.onvoiceschanged = loadSystemVoices;
       loadSystemVoices();
     }
 
-    // Web Speech API STT Integration
+    // Speech Recognition initialization (STT)
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       recognition = new SpeechRecognition();
       recognition.continuous = false;
-      recognition.lang = "si-LK"; // Standard Sri Lankan Sinhala
+      recognition.lang = "si-LK";
       recognition.interimResults = false;
       recognition.maxAlternatives = 1;
 
       recognition.onstart = () => {
         isListening = true;
-        updateUIState();
+        sttErrorBar.classList.add("hidden");
+        renderUI();
       };
 
       recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
         if (transcript.trim()) {
           appendMessage("user", transcript);
-          sendToGemini(transcript);
+          communicateGemini(transcript);
         }
       };
 
       recognition.onerror = (event) => {
-        console.error("Speech Recognition Error:", event.error);
+        console.error("Speech capturing failed:", event.error);
         isListening = false;
-        updateUIState();
+        renderUI();
         if (event.error === "no-speech") {
           displayError("හඬක් හඳුනා ගැනීමට නොහැකි විය. නැවත උත්සාහ කරන්න.");
         } else if (event.error === "not-allowed") {
@@ -584,216 +628,8 @@
 
       recognition.onend = () => {
         isListening = false;
-        updateUIState();
+        renderUI();
       };
-    }
-
-    // Standard local system voice synthesizer
-    function speakTextSystem(text) {
-      if (typeof speechSynthesis === "undefined") return;
-
-      const cleanText = text
-        .replace(/[\*\_~`#]/g, "")
-        .replace(/\(.*?\)/g, "")
-        .trim();
-
-      currentSpeechUtterance = new SpeechSynthesisUtterance(cleanText);
-      currentSpeechUtterance.lang = "si-LK";
-      currentSpeechUtterance.rate = voiceSpeed;
-      currentSpeechUtterance.pitch = voicePitch;
-
-      if (selectedVoice) {
-        currentSpeechUtterance.voice = selectedVoice;
-      } else {
-        const fallbackSinhala = voicesList.find(v => v.lang.includes("si") || v.lang.includes("LK"));
-        if (fallbackSinhala) currentSpeechUtterance.voice = fallbackSinhala;
-      }
-
-      currentSpeechUtterance.onstart = () => {
-        isSpeaking = true;
-        updateUIState();
-      };
-
-      currentSpeechUtterance.onend = () => {
-        isSpeaking = false;
-        updateUIState();
-        
-        if (isContinuousMode && !isTextMode && recognition) {
-          setTimeout(() => {
-            if (!isListening && !isSpeaking && !isThinking) {
-              startListening();
-            }
-          }, 600);
-        }
-      };
-
-      currentSpeechUtterance.onerror = (e) => {
-        console.error("Vocal Synthesis Error:", e);
-        isSpeaking = false;
-        updateUIState();
-      };
-
-      speechSynthesis.speak(currentSpeechUtterance);
-    }
-
-    // High fidelity base64 Audio decoder & player
-    async function playAudioBuffer(base64Data) {
-      return new Promise((resolve) => {
-        try {
-          const binaryString = atob(base64Data);
-          const len = binaryString.length;
-          const bytes = new Uint8Array(len);
-          for (let i = 0; i < len; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-          }
-
-          const isWav = bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46; // RIFF
-          const isMp3 = (bytes[0] === 0x49 && bytes[1] === 0x44 && bytes[2] === 0x33) || (bytes[0] === 0xFF && (bytes[1] & 0xE0) === 0xE0);
-
-          isSpeaking = true;
-          updateUIState();
-
-          if (isWav || isMp3) {
-            const mimeType = isWav ? "audio/wav" : "audio/mp3";
-            const blob = new Blob([bytes], { type: mimeType });
-            const url = URL.createObjectURL(blob);
-            activeAudio = new Audio(url);
-            
-            activeAudio.onended = () => {
-              isSpeaking = false;
-              updateUIState();
-              resolve();
-              if (isContinuousMode && !isTextMode && recognition) {
-                setTimeout(() => startListening(), 600);
-              }
-            };
-
-            activeAudio.onerror = (e) => {
-              console.error("Audio player error", e);
-              speakTextSystem("කටහඬ ධාවනය කිරීමේ ගැටලුවකි.");
-              resolve();
-            };
-
-            activeAudio.play().catch(() => resolve());
-          } else {
-            // Assume raw 16-bit PCM little-endian at 24kHz
-            const numSamples = len / 2;
-            const floatData = new Float32Array(numSamples);
-            const view = new DataView(bytes.buffer);
-
-            for (let i = 0; i < numSamples; i++) {
-              if (i * 2 + 1 < len) {
-                const sample = view.getInt16(i * 2, true);
-                floatData[i] = sample / 32768;
-              }
-            }
-
-            activeAudioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
-            const buffer = activeAudioCtx.createBuffer(1, numSamples, 24000);
-            buffer.getChannelData(0).set(floatData);
-
-            activeSourceNode = activeAudioCtx.createBufferSource();
-            activeSourceNode.buffer = buffer;
-            activeSourceNode.connect(activeAudioCtx.destination);
-            
-            activeSourceNode.onended = () => {
-              isSpeaking = false;
-              updateUIState();
-              resolve();
-              if (isContinuousMode && !isTextMode && recognition) {
-                setTimeout(() => startListening(), 600);
-              }
-            };
-
-            activeSourceNode.start(0);
-          }
-        } catch (e) {
-          console.error("Playback decoding error:", e);
-          isSpeaking = false;
-          updateUIState();
-          resolve();
-        }
-      });
-    }
-
-    // TTS Vocalization Routine
-    async function speakText(text) {
-      if (!text) return;
-      stopSpeech();
-
-      // Abort microphone capture while speaking to avoid self-feedback
-      if (isListening && recognition) {
-        try { recognition.abort(); } catch(e) {}
-        isListening = false;
-      }
-
-      if (voiceProvider === "system" || !apiKey) {
-        speakTextSystem(text);
-        return;
-      }
-
-      // Gemini high fidelity vocal synthesis
-      isSpeaking = true;
-      updateUIState();
-
-      try {
-        const cleanText = text.replace(/[\*\_~`#]/g, "").trim();
-        // Uses the Gemini preview TTS model for audio generation
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-tts-preview:generateContent?key=${apiKey}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: cleanText }] }],
-            generationConfig: {
-              responseModalities: ["AUDIO"],
-              speechConfig: {
-                voiceConfig: {
-                  prebuiltVoiceConfig: {
-                    voiceName: geminiVoice
-                  }
-                }
-              }
-            }
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error("Gemini TTS API returned status error");
-        }
-
-        const data = await response.json();
-        const base64Audio = data.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-
-        if (base64Audio) {
-          await playAudioBuffer(base64Audio);
-        } else {
-          throw new Error("No inline audio data found in response");
-        }
-      } catch (err) {
-        console.warn("Gemini Native Audio fails, falling back to System Speech:", err);
-        speakTextSystem(text);
-      }
-    }
-
-    function stopSpeech() {
-      // 1. Stop system synthesizer
-      if (typeof speechSynthesis !== "undefined") {
-        speechSynthesis.cancel();
-      }
-      // 2. Stop HTML Audio element
-      if (activeAudio) {
-        try { activeAudio.pause(); } catch(e){}
-        activeAudio = null;
-      }
-      // 3. Stop raw PCM source node
-      if (activeSourceNode) {
-        try { activeSourceNode.stop(); } catch(e){}
-        activeSourceNode = null;
-      }
-      isSpeaking = false;
-      updateUIState();
     }
 
     function startListening() {
@@ -801,38 +637,202 @@
         displayError("ඔබගේ බ්‍රවුසරය හඬ හඳුනා ගැනීමේ පහසුකමට (Speech Recognition API) සහය නොදක්වයි.");
         return;
       }
-      stopSpeech();
-      hideError();
+      stopAudioPlayback();
+      sttErrorBar.classList.add("hidden");
       try {
         recognition.start();
-      } catch (e) {
-        console.error("Failed to start listening:", e);
+      } catch (err) {
+        console.error("Failed to start speech capturing:", err);
       }
     }
 
     function stopListening() {
       if (recognition) {
-        recognition.stop();
+        try {
+          recognition.stop();
+        } catch (err) {}
       }
     }
 
-    // Direct Client-Side Gemini Communication Engine over Persistent WebSockets
-    async function sendToGemini(userInput) {
-      const trimmed = userInput.trim();
-      if (!trimmed) return;
+    function displayError(msg) {
+      sttErrorText.textContent = msg;
+      sttErrorBar.classList.remove("hidden");
+    }
 
-      isThinking = true;
-      updateUIState();
+    // Speak voice output using system synthesis
+    function speakSystemTTS(text) {
+      if (typeof speechSynthesis === "undefined") return;
+      const cleanText = text.replace(/[\*\_~`#]/g, "").trim();
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.lang = "si-LK";
+      utterance.rate = voiceSpeed;
+      utterance.pitch = voicePitch;
 
-      if (!apiKey) {
-        isThinking = false;
-        updateUIState();
-        appendMessage("model", "කරුණාකර ඉහළ දකුණු කෙළවරේ ඇති සැකසුම් (Settings) බොත්තම ඔබා ඔබගේ 'Gemini API Key' එක ඇතුලත් කරන්න. ඔබට ගූගල් වෙතින් නොමිලේම API Key එකක් ලබාගත හැක.");
-        settingsPanel.classList.remove("hidden");
+      if (systemVoiceName) {
+        const selected = systemVoices.find((v) => v.name === systemVoiceName);
+        if (selected) utterance.voice = selected;
+      } else {
+        const fallbackSinhala = systemVoices.find(
+          (v) => v.lang.includes("si") || v.lang.includes("LK")
+        );
+        if (fallbackSinhala) utterance.voice = fallbackSinhala;
+      }
+
+      utterance.onstart = () => {
+        isSpeaking = true;
+        renderUI();
+      };
+
+      utterance.onend = () => {
+        isSpeaking = false;
+        renderUI();
+        handleContinuousLoop();
+      };
+
+      utterance.onerror = () => {
+        isSpeaking = false;
+        renderUI();
+      };
+
+      speechSynthesis.speak(utterance);
+    }
+
+    // Play base64 dynamic audio stream buffer
+    function playAudioBase64(base64Data) {
+      try {
+        const binaryString = atob(base64Data);
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        const blob = new Blob([bytes], { type: "audio/mp3" });
+        const url = URL.createObjectURL(blob);
+        activeAudio = new Audio(url);
+
+        activeAudio.onended = () => {
+          isSpeaking = false;
+          renderUI();
+          handleContinuousLoop();
+        };
+
+        activeAudio.onerror = (e) => {
+          console.error("Audio playback error:", e);
+          isSpeaking = false;
+          renderUI();
+          speakSystemTTS("කටහඬ ධාවනය කිරීමේ ගැටලුවකි.");
+        };
+
+        isSpeaking = true;
+        renderUI();
+        activeAudio.play().catch((err) => {
+          console.warn("Autoplay block trigger", err);
+          isSpeaking = false;
+          renderUI();
+        });
+      } catch (err) {
+        console.error("Audio decode failure:", err);
+        speakSystemTTS("කටහඬ ධාවනය කිරීමේ ගැටලුවකි.");
+      }
+    }
+
+    // Vocal Speech Dispatcher Pipeline
+    async function playVoiceResponse(text) {
+      stopAudioPlayback();
+
+      if (isListening && recognition) {
+        try { recognition.abort(); } catch(e) {}
+        isListening = false;
+      }
+
+      const cleanText = text.replace(/[\*\_~`#]/g, "").trim();
+
+      if (voiceProvider === "system" || !apiKey) {
+        speakSystemTTS(cleanText);
         return;
       }
 
-      // FULLY CUSTOMIZED VIRU AI SYSTEM PROMPT
+      isSpeaking = true;
+      renderUI();
+
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-tts-preview:generateContent?key=${apiKey}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: cleanText }] }],
+            generationConfig: {
+              responseModalities: ["AUDIO"],
+              speechConfig: {
+                voiceConfig: {
+                  prebuiltVoiceConfig: { voiceName: geminiVoice }
+                }
+              }
+            }
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error("Gemini Audio Generation error");
+        }
+
+        const data = await response.json();
+        const base64Audio = data.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+        if (base64Audio) {
+          playAudioBase64(base64Audio);
+        } else {
+          throw new Error("Empty inline data audio payload");
+        }
+      } catch (err) {
+        console.warn("Direct High-Fidelity Gemini TTS fails. Executing system engine fallback:", err);
+        speakSystemTTS(cleanText);
+      }
+    }
+
+    function stopAudioPlayback() {
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+      if (activeAudio) {
+        try { activeAudio.pause(); } catch(err) {}
+        activeAudio = null;
+      }
+      isSpeaking = false;
+      renderUI();
+    }
+
+    function handleContinuousLoop() {
+      if (isContinuousMode && !isTextMode && recognition) {
+        setTimeout(() => {
+          if (!isListening && !isSpeaking && !isThinking) {
+            startListening();
+          }
+        }, 750);
+      }
+    }
+
+    // Communicate with Gemini 3.1 Flash Lite
+    async function communicateGemini(userInputText) {
+      const trimmed = userInputText.trim();
+      if (!trimmed) return;
+
+      isThinking = true;
+      renderUI();
+
+      if (!apiKey) {
+        isThinking = false;
+        renderUI();
+        appendMessage("model", "කරුණාකර Admin Settings විවෘත කර ඔබගේ Gemini API Key එක ඇතුලත් කරන්න. ඔබට ගූගල් වෙතින් නොමිලේම API Key එකක් ලබාගත හැක.");
+        adminPanel.classList.remove("hidden");
+        return;
+      }
+
+      // Pre-compile multi-turn content history matching Gemini schema
+      const contentsPayload = messages.map((m) => ({
+        role: m.role === "user" ? "user" : "model",
+        parts: [{ text: m.text }]
+      }));
+
       const sysInstruction = `THE ULTIMATE VIRU AI SYSTEM PROMPT 🤖✨
 
 IDENTITY & CORE DIRECTIVE:
@@ -861,260 +861,204 @@ Instead, reply STRICTLY in your current enforced language (Sinhala) and instruct
 Tell them something like: "I cannot change the language from the chat! If you want a different language, please go to the Settings icon on the bottom left corner of the screen and change it from there." 
 (Make sure to express this exact meaning completely in Sinhala using your cool persona and emojis!)`;
 
-      // Establish or reuse persistent WebSocket connection for real-time bidirectional audio/text dialog
-      if (!ws || ws.readyState !== WebSocket.OPEN) {
-        ws = new WebSocket(`wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent?key=${apiKey}`);
-        
-        ws.onopen = () => {
-          // Initialize Bidirectional Streaming Setup Message
-          const setupMessage = {
-            setup: {
-              model: "models/gemini-2.5-flash",
-              generationConfig: {
-                responseModalities: voiceProvider === "gemini" ? ["TEXT", "AUDIO"] : ["TEXT"],
-                speechConfig: {
-                  voiceConfig: {
-                    prebuiltVoiceConfig: {
-                      voiceName: geminiVoice
-                    }
-                  }
-                }
-              },
-              systemInstruction: {
-                parts: [{ text: sysInstruction }]
-              }
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: contentsPayload,
+            systemInstruction: {
+              parts: [{ text: sysInstruction }]
+            },
+            generationConfig: {
+              temperature: 0.95
             }
-          };
-          ws.send(JSON.stringify(setupMessage));
-          
-          // Send the actual client message content turn
-          sendClientTurn(trimmed);
-        };
+          })
+        });
 
-        let accumulatedText = "";
-        let accumulatedAudioChunks = [];
+        if (!response.ok) {
+          const errorPayload = await response.json().catch(() => ({}));
+          throw new Error(errorPayload.error?.message || "Generation request failed");
+        }
 
-        ws.onmessage = async (event) => {
-          const response = JSON.parse(event.data);
-          
-          if (response.serverContent && response.serverContent.modelTurn) {
-            const parts = response.serverContent.modelTurn.parts || [];
-            for (const part of parts) {
-              if (part.text) {
-                accumulatedText += part.text;
-              }
-              if (part.inlineData && part.inlineData.data) {
-                accumulatedAudioChunks.push(part.inlineData.data);
-              }
-            }
-          }
+        const data = await response.json();
+        const outputText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
-          if (response.serverContent && response.serverContent.turnComplete) {
-            isThinking = false;
-            updateUIState();
+        isThinking = false;
+        renderUI();
 
-            if (!accumulatedText) {
-              accumulatedText = "මට සමාවෙන්න. මට පිළිතුරක් සකසා ගැනීමට නොහැකි වුණා. 😥";
-            }
+        if (outputText) {
+          appendMessage("model", outputText);
+          playVoiceResponse(outputText);
+        } else {
+          throw new Error("No candidates text output content returned");
+        }
 
-            appendMessage("model", accumulatedText);
-
-            // Execute concurrent audio synthesis queue playback
-            if (voiceProvider === "gemini" && accumulatedAudioChunks.length > 0) {
-              for (const chunk of accumulatedAudioChunks) {
-                await playAudioBuffer(chunk);
-              }
-            } else if (voiceProvider === "system") {
-              speakTextSystem(accumulatedText);
-            }
-
-            // Flush dynamic content buffers
-            accumulatedText = "";
-            accumulatedAudioChunks = [];
-          }
-        };
-
-        ws.onerror = (err) => {
-          console.error("Gemini WebSocket Error:", err);
-          isThinking = false;
-          updateUIState();
-          appendMessage("model", "මවු පද්ධතිය (WebSocket Dialog API) සමඟ සම්බන්ධ වීමේදී දෝෂයක් සිදු විය. 🛠️");
-        };
-
-        ws.onclose = () => {
-          ws = null;
-        };
-      } else {
-        sendClientTurn(trimmed);
-      }
-
-      function sendClientTurn(text) {
-        const clientTurnMessage = {
-          clientContent: {
-            turns: [{
-              role: "user",
-              parts: [{ text: text }]
-            }],
-            turnComplete: true
-          }
-        };
-        ws.send(JSON.stringify(clientTurnMessage));
+      } catch (err) {
+        console.error("Gemini model execution failed:", err);
+        isThinking = false;
+        renderUI();
+        appendMessage("model", `සන්නිවේදන දෝෂයක් සිදු විය: ${err.message || "Unknown API error"}. කරුණාකර API Key නිවැරදිදැයි පරීක්ෂා කර නැවත උත්සාහ කරන්න.`);
       }
     }
 
-    // Responsive State Rendering UI engine
-    function updateUIState() {
-      if (isListening) {
-        statusIndicator.className = "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white bg-red-500 animate-ping";
-        waveformStatus.className = "text-red-500 animate-pulse flex items-center gap-1 font-extrabold uppercase";
-        waveformStatus.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>LISTENING';
-        micStatusLabel.className = "text-xs font-extrabold mt-3 text-red-500 animate-pulse";
-        micStatusLabel.textContent = "ඔබට සවන් දෙයි... (Listening)";
-        micIcon.className = "w-8 h-8 animate-pulse text-white";
-        btnMic.className = "w-20 h-20 rounded-3xl flex flex-col items-center justify-center shadow-2xl transition-all transform hover:scale-105 active:scale-95 bg-gradient-to-tr from-red-600 to-rose-500 text-white";
-        micPingListener.classList.remove("hidden");
-        micPingSpeaker.classList.add("hidden");
-        glowPulse.className = "absolute w-44 h-44 bg-red-100 rounded-full blur-2xl opacity-40 pointer-events-none transition-all duration-500 scale-125";
-      } else if (isSpeaking) {
-        statusIndicator.className = "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white bg-emerald-500 animate-pulse";
-        waveformStatus.className = "text-emerald-500 animate-pulse flex items-center gap-1 font-extrabold uppercase";
-        waveformStatus.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>SPEAKING';
-        micStatusLabel.className = "text-xs font-extrabold mt-3 text-emerald-600 cursor-pointer";
-        micStatusLabel.textContent = "පිළිතුර නවත්වන්න (Tap to Stop Voice)";
-        micIcon.className = "w-8 h-8 text-white";
-        btnMic.className = "w-20 h-20 rounded-3xl flex flex-col items-center justify-center shadow-2xl transition-all transform hover:scale-105 active:scale-95 bg-gradient-to-tr from-indigo-600 to-purple-500 text-white";
-        micPingListener.classList.add("hidden");
-        micPingSpeaker.classList.remove("hidden");
-        glowPulse.className = "absolute w-44 h-44 bg-emerald-100 rounded-full blur-2xl opacity-40 pointer-events-none transition-all duration-500 scale-110";
-      } else if (isThinking) {
-        statusIndicator.className = "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white bg-indigo-500 animate-pulse";
-        waveformStatus.className = "text-indigo-600 animate-pulse flex items-center gap-1 font-extrabold";
-        waveformStatus.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse"></span>THINKING';
-        micStatusLabel.className = "text-xs font-extrabold mt-3 text-indigo-500 animate-pulse";
-        micStatusLabel.textContent = "VIRU AI පිළිතුර සකසමින් පවතී...";
-        micIcon.className = "w-8 h-8 text-white";
-        btnMic.className = "w-20 h-20 rounded-3xl flex flex-col items-center justify-center shadow-2xl transition-all transform hover:scale-105 active:scale-95 bg-indigo-400 text-white cursor-not-allowed";
-        micPingListener.classList.add("hidden");
-        micPingSpeaker.classList.add("hidden");
-        glowPulse.className = "absolute w-44 h-44 bg-indigo-200 rounded-full blur-2xl opacity-40 pointer-events-none transition-all duration-500";
-      } else {
-        statusIndicator.className = "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white bg-indigo-500";
-        waveformStatus.className = "text-indigo-300 font-extrabold";
-        waveformStatus.textContent = "සූදානම්";
-        micStatusLabel.className = "text-xs font-extrabold mt-3 text-indigo-900";
-        micStatusLabel.textContent = "සිංහලෙන් කතා කිරීමට ඔබන්න (Tap to Speak)";
-        micIcon.className = "w-8 h-8 text-white";
-        btnMic.className = "w-20 h-20 rounded-3xl flex flex-col items-center justify-center shadow-2xl transition-all transform hover:scale-105 active:scale-95 bg-indigo-600 text-white hover:bg-indigo-700";
-        micPingListener.classList.add("hidden");
-        micPingSpeaker.classList.add("hidden");
-        glowPulse.className = "absolute w-44 h-44 bg-indigo-100 rounded-full blur-2xl opacity-40 pointer-events-none transition-all duration-500";
-      }
-    }
-
-    // Output Chat Messages dynamically with voice controls
+    // Appending dynamic messages blocks to chat dialog window
     function appendMessage(role, text) {
       const msgId = Date.now();
       messages.push({ id: msgId, role, text });
 
-      const container = document.createElement("div");
-      container.className = `flex flex-col ${role === 'user' ? 'items-end' : 'items-start'} animate-fade-in`;
+      const msgContainer = document.createElement("div");
+      msgContainer.className = `flex flex-col ${role === 'user' ? 'items-end' : 'items-start'} animate-fade-in`;
 
-      const card = document.createElement("div");
-      card.className = `max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
+      const msgCard = document.createElement("div");
+      msgCard.className = `max-w-[85%] rounded-xl px-4 py-3.5 text-sm leading-relaxed ${
         role === 'user'
-          ? "bg-indigo-600 text-white font-semibold rounded-tr-none shadow-md shadow-indigo-100"
-          : "bg-white border border-indigo-100 text-indigo-950 rounded-tl-none font-medium"
+          ? "bg-[#E53935] text-white font-medium rounded-tr-none shadow-md shadow-[#E53935]/15"
+          : "bg-[#141414] border border-white/5 text-[#F2F2F2] rounded-tl-none whitespace-pre-wrap font-light"
       }`;
 
       const p = document.createElement("p");
       p.textContent = text;
-      card.appendChild(p);
+      msgCard.appendChild(p);
 
-      // Speak reply controls for model responses
       if (role === "model") {
-        const controls = document.createElement("div");
-        controls.className = "flex items-center justify-end gap-1.5 mt-2 border-t border-indigo-100/60 pt-2";
-        
-        const btnReplay = document.createElement("button");
-        btnReplay.className = "text-xs text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1.5 bg-indigo-50 px-2.5 py-1 rounded-xl border border-indigo-100 font-bold";
-        btnReplay.innerHTML = '<i data-lucide="volume-2" class="w-3.5 h-3.5"></i> නැවත සවන් දෙන්න';
-        btnReplay.onclick = () => speakText(text);
+        const actionsRow = document.createElement("div");
+        actionsRow.className = "flex items-center justify-end gap-2 mt-3 pt-2.5 border-t border-white/5";
 
-        controls.appendChild(btnReplay);
-        card.appendChild(controls);
+        const btnReplay = document.createElement("button");
+        btnReplay.className = "text-[10px] uppercase tracking-wider font-mono bg-[#252525] border border-white/10 text-white hover:border-[#E53935]/50 px-2.5 py-1 rounded flex items-center gap-1.5 cursor-pointer";
+        btnReplay.innerHTML = '<i data-lucide="volume-2" class="w-3.5 h-3.5 text-[#E53935]"></i> Speak Output';
+        btnReplay.onclick = () => playVoiceResponse(text);
+
+        actionsRow.appendChild(btnReplay);
+        msgCard.appendChild(actionsRow);
       }
 
-      container.appendChild(card);
+      msgContainer.appendChild(msgCard);
 
-      const timestamp = document.createElement("span");
-      timestamp.className = "text-[9px] text-indigo-400 font-extrabold mt-1 px-1";
-      const now = new Date();
-      timestamp.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      container.appendChild(timestamp);
+      const metaSpan = document.createElement("span");
+      metaSpan.className = "text-[9px] font-mono uppercase tracking-widest text-[#737373] mt-2 px-1";
+      metaSpan.textContent = role === "user" ? "You" : "VIRU AI";
+      msgContainer.appendChild(metaSpan);
 
-      chatBox.appendChild(container);
-      chatBox.scrollTop = chatBox.scrollHeight;
+      dialogueBox.appendChild(msgContainer);
+      dialogueBox.scrollTop = dialogueBox.scrollHeight;
 
-      // Render updated Lucide vectors inside the message cards
+      // Re-hydrate Lucide icons inside appended cards
       lucide.createIcons();
     }
 
-    // Suggested presets
-    function sendPreset(text) {
+    // Trigger suggested Preset Queries
+    function submitPreset(text) {
       appendMessage("user", text);
-      sendToGemini(text);
+      communicateGemini(text);
     }
 
-    function displayError(msg) {
-      errorAlertText.textContent = msg;
-      listeningErrorAlert.classList.remove("hidden");
-      instructionLabel.classList.add("hidden");
-    }
-
-    function hideError() {
-      listeningErrorAlert.classList.add("hidden");
-      instructionLabel.classList.remove("hidden");
-    }
-
-    // Toggle Mode Settings Binding triggers
-    btnToggleInputMode.addEventListener("click", () => {
-      isTextMode = !isTextMode;
+    // Render operational UI controls
+    function renderUI() {
+      // Toggle inputs based on layout parameters
       if (isTextMode) {
-        btnToggleInputMode.classList.add("bg-indigo-500/10", "text-indigo-600");
-        btnToggleInputMode.title = "හඬ ක්‍රමයට මාරුවන්න";
-        textModeInput.classList.remove("hidden");
-        voiceModeInput.classList.add("hidden");
-        textInputField.focus();
+        textModeContainer.classList.remove("hidden");
+        voiceModeContainer.classList.add("hidden");
+        btnInputToggle.textContent = "Switch to Voice Mode";
       } else {
-        btnToggleInputMode.classList.remove("bg-indigo-500/10", "text-indigo-600");
-        btnToggleInputMode.title = "ලිඛිත ක්‍රමයට මාරුවන්න";
-        textModeInput.classList.add("hidden");
-        voiceModeInput.classList.remove("hidden");
+        textModeContainer.classList.add("hidden");
+        voiceModeContainer.classList.remove("hidden");
+        btnInputToggle.textContent = "Switch to Text Mode";
+      }
+
+      // Continuous mode button
+      if (isContinuousMode) {
+        btnContinuous.className = "text-[10px] uppercase tracking-wider px-3.5 py-1.5 rounded font-mono font-bold border transition-all cursor-pointer bg-[#E53935] border-[#E53935] text-white";
+        btnContinuous.textContent = "ON";
+      } else {
+        btnContinuous.className = "text-[10px] uppercase tracking-wider px-3.5 py-1.5 rounded font-mono font-bold border transition-all cursor-pointer bg-[#252525] border-white/10 text-[#737373]";
+        btnContinuous.textContent = "OFF";
+      }
+
+      // Microscopic visual indicator states
+      if (isListening) {
+        headerStatusIndicator.className = "w-1.5 h-1.5 rounded-full bg-red-500 animate-ping";
+        waveformLabel.className = "text-red-500 animate-pulse font-mono uppercase tracking-[0.2em]";
+        waveformLabel.textContent = "Capturing Audio";
+        micStatus.className = "text-[11px] uppercase tracking-widest font-mono font-bold mt-3 text-red-500 animate-pulse";
+        micStatus.textContent = "Capturing Sinhala Speech...";
+        micIcon.setAttribute("data-lucide", "mic-off");
+        btnMic.className = "w-16 h-16 rounded-2xl flex flex-col items-center justify-center transition-all transform scale-105 cursor-pointer bg-red-600 text-white shadow-lg shadow-red-600/25";
+        pulseRingListening.classList.remove("hidden");
+        pulseRingSpeaking.classList.add("hidden");
+      } else if (isSpeaking) {
+        headerStatusIndicator.className = "w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse";
+        waveformLabel.className = "text-emerald-500 animate-pulse font-mono uppercase tracking-[0.2em]";
+        waveformLabel.textContent = "Synthesizing Output";
+        micStatus.className = "text-[11px] uppercase tracking-widest font-mono font-bold mt-3 text-emerald-500 animate-pulse cursor-pointer";
+        micStatus.textContent = "Tap Mic to Stop Speech Output";
+        micIcon.setAttribute("data-lucide", "volume-x");
+        btnMic.className = "w-16 h-16 rounded-2xl flex flex-col items-center justify-center transition-all transform scale-105 cursor-pointer bg-emerald-600 text-white shadow-lg shadow-emerald-600/25";
+        pulseRingListening.classList.add("hidden");
+        pulseRingSpeaking.classList.remove("hidden");
+      } else if (isThinking) {
+        headerStatusIndicator.className = "w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse";
+        waveformLabel.className = "text-amber-500 animate-pulse font-mono uppercase tracking-[0.2em]";
+        waveformLabel.textContent = "Evaluating Context";
+        micStatus.className = "text-[11px] uppercase tracking-widest font-mono font-bold mt-3 text-amber-500 animate-pulse";
+        micStatus.textContent = "Processing response query...";
+        micIcon.setAttribute("data-lucide", "sparkles");
+        btnMic.className = "w-16 h-16 rounded-2xl flex flex-col items-center justify-center transition-all scale-95 cursor-wait bg-amber-500 text-white";
+        pulseRingListening.classList.add("hidden");
+        pulseRingSpeaking.classList.add("hidden");
+      } else {
+        headerStatusIndicator.className = "w-1.5 h-1.5 rounded-full bg-[#E53935]";
+        waveformLabel.className = "text-[#737373] font-mono uppercase tracking-[0.2em]";
+        waveformLabel.textContent = "Standby";
+        micStatus.className = "text-[11px] uppercase tracking-widest font-mono font-bold mt-3 text-[#737373]";
+        micStatus.textContent = "Tap to speak in Sinhala";
+        micIcon.setAttribute("data-lucide", "mic");
+        btnMic.className = "w-16 h-16 rounded-2xl flex flex-col items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer bg-[#E53935] hover:bg-[#C62828] text-white";
+        pulseRingListening.classList.add("hidden");
+        pulseRingSpeaking.classList.add("hidden");
+      }
+
+      lucide.createIcons();
+    }
+
+    // Keyboard bindings hook "A" / "a" to unlock password verification flow
+    window.addEventListener("keydown", (e) => {
+      const activeElement = document.activeElement;
+      if (activeElement && (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA")) {
+        return;
+      }
+      if (e.key.toLowerCase() === "a") {
+        e.preventDefault();
+        passwordInput.value = "";
+        passwordError.classList.add("hidden");
+        passwordModal.classList.remove("hidden");
+        passwordInput.focus();
       }
     });
 
-    btnToggleSettings.addEventListener("click", () => {
-      settingsPanel.classList.toggle("hidden");
+    // Password modal actions
+    passwordForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (passwordInput.value === "2010") {
+        passwordModal.classList.add("hidden");
+        adminPanel.classList.remove("hidden");
+        passwordError.classList.add("hidden");
+      } else {
+        passwordError.classList.remove("hidden");
+      }
     });
 
-    btnCloseSettings.addEventListener("click", () => {
-      settingsPanel.classList.add("hidden");
+    btnCloseModal.addEventListener("click", () => {
+      passwordModal.classList.add("hidden");
     });
 
-    // Save configuration states
-    apiKeyInput.addEventListener("input", (e) => {
-      apiKey = e.target.value.trim();
-      localStorage.setItem("viru_ai_api_key", apiKey);
-      if (ws) { ws.close(); ws = null; } // Recalibrate WebSocket endpoints on API key rotation
+    btnCancelModal.addEventListener("click", () => {
+      passwordModal.classList.add("hidden");
     });
 
-    geminiVoiceSelect.addEventListener("change", (e) => {
-      geminiVoice = e.target.value;
-      localStorage.setItem("viru_ai_gemini_voice", geminiVoice);
-      if (ws) { ws.close(); ws = null; }
-    });
-
-    btnToggleKey.addEventListener("click", () => {
+    // Toggle credentials visibility
+    btnShowKey.addEventListener("click", () => {
       if (apiKeyInput.type === "password") {
         apiKeyInput.type = "text";
         eyeIcon.setAttribute("data-lucide", "eye-off");
@@ -1125,79 +1069,75 @@ Tell them something like: "I cannot change the language from the chat! If you wa
       lucide.createIcons();
     });
 
-    voiceSelect.addEventListener("change", (e) => {
-      const selectedName = e.target.value;
-      savedVoiceName = selectedName;
-      localStorage.setItem("viru_ai_voice_name", selectedName);
-      selectedVoice = voicesList.find(v => v.name === selectedName) || null;
+    // Save configurations
+    apiKeyInput.addEventListener("input", (e) => {
+      apiKey = e.target.value.trim();
+      localStorage.setItem("viru_ai_api_key", apiKey);
+    });
+
+    selectGeminiVoice.addEventListener("change", (e) => {
+      geminiVoice = e.target.value;
+      localStorage.setItem("viru_ai_gemini_voice", geminiVoice);
+    });
+
+    selectSystemVoice.addEventListener("change", (e) => {
+      systemVoiceName = e.target.value;
+      localStorage.setItem("viru_ai_voice_name", systemVoiceName);
     });
 
     sliderSpeed.addEventListener("input", (e) => {
       voiceSpeed = parseFloat(e.target.value);
       localStorage.setItem("viru_ai_speed", voiceSpeed.toString());
-      speedVal.textContent = voiceSpeed.toFixed(1) + "x";
+      speedIndicator.textContent = voiceSpeed.toFixed(1) + "x";
     });
 
     sliderPitch.addEventListener("input", (e) => {
       voicePitch = parseFloat(e.target.value);
       localStorage.setItem("viru_ai_pitch", voicePitch.toString());
-      pitchVal.textContent = voicePitch.toFixed(1);
+      pitchIndicator.textContent = voicePitch.toFixed(1);
     });
 
-    btnTestVoice.addEventListener("click", () => {
-      speakText("ආයුබෝවන්. ඔබගේ සිංහල කටහඬ සහායකයා දැන් සක්‍රීයයි.");
+    btnVoiceTest.addEventListener("click", () => {
+      playVoiceResponse("ආයුබෝවන්. ඔබගේ සිංහල කටහඬ සහායකයා දැන් සාර්ථකව ක්‍රියාත්මකයි.");
     });
 
-    btnToggleContinuousMode.addEventListener("click", () => {
+    btnContinuous.addEventListener("click", () => {
       isContinuousMode = !isContinuousMode;
-      if (isContinuousMode) {
-        btnToggleContinuousMode.className = "text-xs px-4 py-2 rounded-xl font-black transition-all shadow-sm bg-indigo-600 text-white";
-        btnToggleContinuousMode.textContent = "සක්‍රීයයි (ON)";
-      } else {
-        btnToggleContinuousMode.className = "text-xs px-4 py-2 rounded-xl font-black transition-all shadow-sm bg-indigo-100/80 text-indigo-600 hover:bg-indigo-100";
-        btnToggleContinuousMode.textContent = "අක්‍රීයයි (OFF)";
+      renderUI();
+    });
+
+    btnInputToggle.addEventListener("click", () => {
+      isTextMode = !isTextMode;
+      renderUI();
+      if (isTextMode) {
+        textInput.focus();
       }
     });
 
-    // Clear & Re-initialize conversation log
-    btnClearChat.addEventListener("click", () => {
-      chatBox.innerHTML = `
-        <div class="flex flex-col items-start animate-fade-in">
-          <div class="max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm bg-white border border-indigo-100 text-indigo-950 rounded-tl-none font-medium">
-            <p>ආයුබෝවන්! සංවාදය නැවත ආරම්භ කරන ලදී. මට සිංහලෙන් ඕනෑම ප්‍රශ්නයක් අසන්න. 🌸</p>
-          </div>
-          <span class="text-[9px] text-indigo-400 font-extrabold mt-1 px-1">Restarted</span>
-        </div>
-      `;
-      messages = [];
-      stopSpeech();
-    });
-
-    // Keyboard bindings for manual text entry
-    textInputField.addEventListener("keydown", (e) => {
+    // Keyboard keys handler for input fields
+    textInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
-        const val = textInputField.value.trim();
-        if (val) {
-          textInputField.value = "";
-          appendMessage("user", val);
-          sendToGemini(val);
+        const value = textInput.value.trim();
+        if (value) {
+          textInput.value = "";
+          appendMessage("user", value);
+          communicateGemini(value);
         }
       }
     });
 
     btnSendText.addEventListener("click", () => {
-      const val = textInputField.value.trim();
-      if (val) {
-        textInputField.value = "";
-        appendMessage("user", val);
-        sendToGemini(val);
+      const value = textInput.value.trim();
+      if (value) {
+        textInput.value = "";
+        appendMessage("user", value);
+        communicateGemini(value);
       }
     });
 
-    // Main Microphone Trigger
     btnMic.addEventListener("click", () => {
       if (isSpeaking) {
-        stopSpeech();
+        stopAudioPlayback();
         return;
       }
       if (isListening) {
@@ -1207,10 +1147,10 @@ Tell them something like: "I cannot change the language from the chat! If you wa
       }
     });
 
-    // Initialize all dynamic icons on window load
+    // On Load Initialization
     window.addEventListener("DOMContentLoaded", () => {
       lucide.createIcons();
-      updateUIState();
+      renderUI();
     });
   </script>
 </body>
